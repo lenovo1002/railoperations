@@ -31,5 +31,10 @@ public class TripDetailsController {
 		
 		return tripService.addTrip(tripDetails);
 	}
+	
+	@GetMapping("/test") 
+	public String test() {
+		return "Yahoo, Server is up !";
+	}
 
 }

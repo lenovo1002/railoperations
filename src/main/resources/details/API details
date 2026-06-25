@@ -1,0 +1,65 @@
+GET -> http://localhost:8080/tripchart/1100
+
+1100 -> path variable 
+return json -> 
+{
+    "dutyNo": 1100,
+    "signOn": "CVC",
+    "tripTime": [
+        {
+            "trainId": 101,
+            "tripTime": "06:24:00"
+        },
+        {
+            "trainId": 108,
+            "tripTime": "08:24:00"
+        },
+        {
+            "trainId": 105,
+            "tripTime": "10:18:00"
+        }
+    ]
+}
+
+
+POST -> http://localhost:8080/tripchart/addtrip
+request body 
+JSON -> 
+{
+  "dutyNo": 11000,
+  "signOn": "RHD",
+  "tripTime": [
+    {
+      "trainId": 101,
+      "tripTime": "06:24"
+    },
+    {
+      "trainId": 108,
+      "tripTime": "08:24"
+    },
+    {
+      "trainId": 105,
+      "tripTime": "10:18"
+    }
+  ]
+}
+
+return JSON -> 
+{
+    "dutyNo": 11000,
+    "signOn": "RHD",
+    "tripTime": [
+        {
+            "trainId": 101,
+            "tripTime": "06:24:00"
+        },
+        {
+            "trainId": 108,
+            "tripTime": "08:24:00"
+        },
+        {
+            "trainId": 105,
+            "tripTime": "10:18:00"
+        }
+    ]
+}

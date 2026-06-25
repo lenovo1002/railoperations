@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import mahametro.tripchart.entity.TripDetails;
 import mahametro.tripchart.service.TripChartService;
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin("https://convinced-parties-championship-intro.trycloudflare.com/")
 @RestController
 @RequestMapping("tripchart")
 public class TripDetailsController {

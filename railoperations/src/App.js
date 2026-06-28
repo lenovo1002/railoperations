@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import DashboardGrid from './components/DashboardGrid';
+import AdminPage from './components/AdminPage';
 
 function App() {
   const [clockValue, setClockValue] = useState('');
@@ -8,6 +9,7 @@ function App() {
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
 
   useEffect(() => {
     const formatClock = () => {
@@ -34,60 +36,45 @@ function App() {
     const text = tickerTextRef.current;
     if (!container || !text) return;
 
-    let containerWidth = 0;
-    let textWidth = 0;
-    let singleWidth = 0;
     let pos = 0;
-    const speed = 80; // pixels per second
+    const speed = 70;
     let rafId = null;
     let lastTime = performance.now();
-    let paused = false;
 
-    function measure() {
-      containerWidth = container.clientWidth;
-      textWidth = text.scrollWidth;
-      // prefer the width of a single .ticker-item if present (handles single or duplicated items)
-      const firstItem = text.querySelector('.ticker-item');
-      singleWidth = firstItem ? firstItem.scrollWidth : textWidth;
-      if (!singleWidth) singleWidth = textWidth;
-      // start just outside right edge so it appears beside controls
+    const measure = () => {
+      const textWidth = text.scrollWidth;
+      const containerWidth = container.clientWidth;
       pos = containerWidth;
       text.style.transform = `translateX(${pos}px)`;
-    }
+      text.style.width = `${textWidth}px`;
+    };
 
-    function animate(now) {
-      if (paused) {
-        lastTime = now;
-        rafId = requestAnimationFrame(animate);
-        return;
-      }
+    const animate = (now) => {
       const dt = (now - lastTime) / 1000;
       lastTime = now;
       pos -= speed * dt;
-      // when the entire item has moved past the left edge, reset to start at right edge
-      if (pos <= -singleWidth) {
-        pos = containerWidth;
+
+      if (pos <= -text.scrollWidth) {
+        pos = container.clientWidth;
       }
+
       text.style.transform = `translateX(${pos}px)`;
       rafId = requestAnimationFrame(animate);
-    }
-
-    function onEnter() { paused = true; }
-    function onLeave() { paused = false; }
+    };
 
     measure();
     window.addEventListener('resize', measure);
-    container.addEventListener('mouseenter', onEnter);
-    container.addEventListener('mouseleave', onLeave);
     rafId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener('resize', measure);
-      container.removeEventListener('mouseenter', onEnter);
-      container.removeEventListener('mouseleave', onLeave);
       if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
+
+  if (isAdminLoggedIn) {
+    return <AdminPage onLogout={() => setIsAdminLoggedIn(false)} />;
+  }
 
   return (
     <div className="app-shell">
@@ -160,7 +147,14 @@ function App() {
               <button type="button" className="modal-button secondary" onClick={() => setShowAdminModal(false)}>
                 Cancel
               </button>
-              <button type="button" className="modal-button primary">
+              <button
+                type="button"
+                className="modal-button primary"
+                onClick={() => {
+                  setIsAdminLoggedIn(true);
+                  setShowAdminModal(false);
+                }}
+              >
                 Login
               </button>
             </div>

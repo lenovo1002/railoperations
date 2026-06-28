@@ -4,6 +4,10 @@ import DashboardGrid from './components/DashboardGrid';
 
 function App() {
   const [clockValue, setClockValue] = useState('');
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [loginId, setLoginId] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const formatClock = () => {
@@ -100,7 +104,11 @@ function App() {
           <button className="nav-button nav-button-icon" aria-label="Notifications">
             🔔
           </button>
-          <button className="nav-button admin-button" aria-label="Admin Login">
+          <button
+            className="nav-button admin-button"
+            aria-label="Admin Login"
+            onClick={() => setShowAdminModal(true)}
+          >
             <span className="admin-icon">👤</span>
             <span className="admin-label">Admin Login</span>
           </button>
@@ -119,6 +127,46 @@ function App() {
           © 2026 Raj Shantaram Parsharam. All rights reserved.
         </footer>
       </div>
+
+      {showAdminModal && (
+        <div className="modal-overlay" role="presentation" onClick={() => setShowAdminModal(false)}>
+          <div className="modal-backdrop" aria-hidden="true" />
+          <div className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title" onClick={(event) => event.stopPropagation()}>
+            <h2 id="admin-modal-title">Admin Login</h2>
+            <label className="modal-field" htmlFor="admin-login-id">
+              <span>Login ID</span>
+              <input id="admin-login-id" type="text" value={loginId} onChange={(event) => setLoginId(event.target.value)} />
+            </label>
+            <label className="modal-field" htmlFor="admin-password">
+              <span>Password</span>
+              <div className="password-input-wrapper">
+                <input
+                  id="admin-password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  onClick={() => setShowPassword((value) => !value)}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </label>
+            <div className="modal-actions">
+              <button type="button" className="modal-button secondary" onClick={() => setShowAdminModal(false)}>
+                Cancel
+              </button>
+              <button type="button" className="modal-button primary">
+                Login
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

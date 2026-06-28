@@ -12,8 +12,8 @@ function App() {
       const datePart = now.toLocaleDateString('en-US', options);
       const timePart = [now.getHours(), now.getMinutes(), now.getSeconds()]
         .map((value) => String(value).padStart(2, '0'))
-        .join('-');
-      setClockValue(`${datePart} / ${timePart}`);
+        .join(':');
+      setClockValue(`${datePart} | ${timePart}`);
     };
 
     formatClock();
@@ -92,7 +92,7 @@ function App() {
 
         <div className="top-bar-ticker" aria-hidden="true" ref={tickerRef}>
           <div className="ticker-text" ref={tickerTextRef}>
-            <span className="ticker-item">this site is solely developed by RSP. It has no rights from offical MAHA METRO</span>
+            <span className="ticker-item">Disclaimer: This is not an official Maha Metro website. It is an independently developed project and is not affiliated with, endorsed by, or associated with Maha Metro. For official information, please visit the official Maha Metro website.</span>
           </div>
         </div>
 
@@ -112,7 +112,12 @@ function App() {
           <DashboardGrid />
         </main>
 
-        <footer className="app-footer">© Maha Metro 2026, All rights reserved.</footer>
+        <footer className="app-footer">
+          <strong>Disclaimer</strong><br />
+          This website is an independent project developed for informational and educational purposes only. It is <strong>not</strong> an official website of Maha Metro and is <strong>not affiliated with, endorsed by, or associated with</strong> Maha Metro or its parent organizations.<br /><br />
+          All trademarks, logos, and brand names are the property of their respective owners and are used only for identification and informational purposes. The developer makes every effort to provide accurate information; however, this website should not be considered an official source. For official announcements, schedules, fares, and other services, please refer to the official Maha Metro website.<br /><br />
+          © 2026 Raj Shantaram Parsharam. All rights reserved.
+        </footer>
       </div>
     </div>
   );

@@ -1,38 +1,237 @@
-.App {
-  text-align: center;
+:root {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #ffffff;
+  color: #111827;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.App-header {
-  background-color: #282c34;
+body {
+  background-color: #ffffff;
   min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  width: 100%;
+  padding: 0;
+  background-color: #ffffff;
+  background-image: url("file:///C:/Users/rajpa/Downloads/IMG_20260627_134639c.png");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: contain;
+}
+
+.top-bar {
+  width: 100vw;
+  max-width: 100vw;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0 0 24px;
+  padding: 10px 16px;
+  border-radius: 0;
+  background: rgb(0, 36, 80);
+  border: none;
+  box-shadow: none;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
+.app-content {
+  width: 100%;
+  padding: 0 28px 28px;
+}
+
+.top-bar-left {
+  font-size: 1.05rem;
+  color: #111827;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  background: #ffffff;
+  padding: 6px 10px;
+  border-radius: 12px;
+  border: 2px solid #ff3b3b;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Courier New', Courier, 'Lucida Console', monospace;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+.top-bar-right {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.nav-button {
+  min-width: 50px;
+  height: 46px;
+  padding: 0;
+  border-radius: 14px;
+  border: 2px solid #ff3b3b;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  position: relative;
+}
+
+.nav-button:hover {
+  transform: translateY(-1px);
+}
+
+.nav-button-icon {
+  min-width: 50px;
+  padding: 10px 12px;
+  font-size: 1.25rem;
+}
+
+.admin-button {
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.admin-icon {
+  font-size: 1.25rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.admin-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 6px 10px;
+  font-size: 0.88rem;
+  color: #ffffff;
+  background: rgba(0, 36, 80, 0.92);
+  border-radius: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.admin-button:hover .admin-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Ticker styles */
+.top-bar-ticker {
+  flex: 1 1 auto;
+  overflow: hidden;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  min-width: 0; /* allow flex truncation */
+}
+
+.ticker-text {
+  display: inline-block;
+  white-space: nowrap;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  padding: 0;
+  will-change: transform;
+  font-family: 'Lucida Handwriting', 'Brush Script MT', cursive;
+  /* ensure it's a single line and doesn't break */
+  text-overflow: clip;
+}
+
+/* pause hint: when container hovered, JS pauses animation */
+
+.dashboard-page {
+  width: 100%;
+  display: grid;
+  gap: 24px;
+}
+
+.dashboard-intro {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+  padding: 30px 32px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(147, 197, 253, 0.26);
+  box-shadow: 0 24px 45px rgba(15, 23, 42, 0.08);
+}
+
+.dashboard-label {
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+  color: #2563eb;
+  font-weight: 700;
+  background: rgba(59, 130, 246, 0.12);
+  width: fit-content;
+}
+
+.dashboard-intro h1 {
+  margin: 0;
+  font-size: clamp(2rem, 2.6vw, 2.8rem);
+  letter-spacing: -0.03em;
+}
+
+.dashboard-intro p {
+  margin: 0;
+  max-width: 800px;
+  color: #475569;
+  line-height: 1.75;
+}
+
+.app-footer {
+  width: 100%;
+  margin-top: 24px;
+  padding: 18px 16px;
+  text-align: center;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    padding: 22px;
+    background-position: top center;
   }
-  to {
-    transform: rotate(360deg);
+
+  .top-bar {
+    padding: 16px 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 18px 14px;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-intro {
+    padding: 24px 22px;
   }
 }

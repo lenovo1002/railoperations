@@ -372,14 +372,18 @@ body {
   color: #1f2937;
 }
 
-.duty-field input {
+.duty-field input,
+.duty-field select {
   border: 1.5px solid #d1d5db;
   border-radius: 10px;
   font-size: 0.95rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 10px 12px;
+  background: #ffffff;
 }
 
-.duty-field input:focus {
+.duty-field input:focus,
+.duty-field select:focus {
   outline: none;
   border-color: #ff3b3b;
   box-shadow: 0 0 0 3px rgba(255, 59, 59, 0.12);

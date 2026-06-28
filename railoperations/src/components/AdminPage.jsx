@@ -11,6 +11,7 @@ const initialTrip = {
 
 const initialFormState = {
   dutyNo: '',
+  line: 'Line 1',
   signOnTime: '',
   signOnLocation: '',
   signOffLocation: '',
@@ -146,6 +147,13 @@ const AdminPage = ({ onLogout }) => {
                   <input name="dutyNo" value={formData.dutyNo} onChange={handleFieldChange} placeholder="e.g. PDC-101" />
                 </label>
                 <label className="modal-field duty-field">
+                  <span>Line</span>
+                  <select name="line" value={formData.line} onChange={handleFieldChange}>
+                    <option value="Line 1">Line 1</option>
+                    <option value="Line 2">Line 2</option>
+                  </select>
+                </label>
+                <label className="modal-field duty-field">
                   <span>Sign On Time</span>
                   <input name="signOnTime" type="time" value={formData.signOnTime} onChange={handleFieldChange} />
                 </label>
@@ -154,12 +162,12 @@ const AdminPage = ({ onLogout }) => {
                   <input name="signOnLocation" value={formData.signOnLocation} onChange={handleFieldChange} placeholder="e.g. RHD" />
                 </label>
                 <label className="modal-field duty-field">
-                  <span>Sign Off Location</span>
-                  <input name="signOffLocation" value={formData.signOffLocation} onChange={handleFieldChange} placeholder="e.g. DHO" />
-                </label>
-                <label className="modal-field duty-field">
                   <span>Sign Off Time</span>
                   <input name="signOffTime" type="time" value={formData.signOffTime} onChange={handleFieldChange} />
+                </label>
+                <label className="modal-field duty-field">
+                  <span>Sign Off Location</span>
+                  <input name="signOffLocation" value={formData.signOffLocation} onChange={handleFieldChange} placeholder="e.g. DHO" />
                 </label>
               </div>
 

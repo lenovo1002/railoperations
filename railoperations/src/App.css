@@ -329,6 +329,128 @@ body {
   color: #111827;
 }
 
+.duty-form-modal {
+  width: min(100%, 760px);
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 2px solid #ff3b3b;
+}
+
+.modal-header {
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  margin: 0 0 6px;
+  color: #002450;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.duty-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.duty-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.duty-field {
+  margin-bottom: 0;
+}
+
+.duty-field span {
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.duty-field input {
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.duty-field input:focus {
+  outline: none;
+  border-color: #ff3b3b;
+  box-shadow: 0 0 0 3px rgba(255, 59, 59, 0.12);
+}
+
+.trip-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trip-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trip-section-header h3 {
+  margin: 0;
+  color: #002450;
+  font-size: 1rem;
+}
+
+.add-trip-button {
+  border: none;
+  background: #002450;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.trip-entry {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 14px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trip-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #002450;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.remove-trip-button {
+  border: none;
+  background: transparent;
+  color: #ff3b3b;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+
+.trip-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.duty-form-actions {
+  margin-top: 0;
+}
+
 @media (max-width: 900px) {
   .app-shell {
     padding: 22px;
@@ -352,5 +474,10 @@ body {
 
   .dashboard-intro {
     padding: 24px 22px;
+  }
+
+  .duty-form-grid,
+  .trip-grid {
+    grid-template-columns: 1fr;
   }
 }

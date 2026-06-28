@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import DashboardGrid from './components/DashboardGrid';
 import AdminPage from './components/AdminPage';
+import DutyDetailsPage from './components/DutyDetailsPage';
 
 function App() {
   const [clockValue, setClockValue] = useState('');
@@ -10,6 +11,7 @@ function App() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [activePage, setActivePage] = useState('home');
 
   useEffect(() => {
     const formatClock = () => {
@@ -76,6 +78,10 @@ function App() {
     return <AdminPage onLogout={() => setIsAdminLoggedIn(false)} />;
   }
 
+  if (activePage === 'duty-details') {
+    return <DutyDetailsPage onBack={() => setActivePage('home')} />;
+  }
+
   return (
     <div className="app-shell">
       <div className="top-bar">
@@ -104,7 +110,11 @@ function App() {
 
       <div className="app-content">
         <main className="dashboard-page">
-          <DashboardGrid />
+          <DashboardGrid onSelectCard={(title) => {
+            if (title === 'Get Duty Details') {
+              setActivePage('duty-details');
+            }
+          }} />
         </main>
 
         <footer className="app-footer">

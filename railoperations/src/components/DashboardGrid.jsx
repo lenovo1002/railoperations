@@ -11,11 +11,19 @@ const cards = [
   { title: 'Raise Issue', icon: '⟲', colorClass: 'card-violet' },
 ];
 
-const DashboardGrid = () => {
+const DashboardGrid = ({ onSelectCard }) => {
   return (
     <section className="dashboard-grid">
       {cards.map((card) => (
-        <DashboardCard key={card.title} {...card} />
+        <DashboardCard
+          key={card.title}
+          {...card}
+          onClick={() => {
+            if (onSelectCard) {
+              onSelectCard(card.title);
+            }
+          }}
+        />
       ))}
     </section>
   );

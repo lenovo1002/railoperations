@@ -12,6 +12,8 @@
   border: 2px solid #000000;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   cursor: pointer;
+  text-align: left;
+  font: inherit;
 }
 
 .dashboard-card:hover {

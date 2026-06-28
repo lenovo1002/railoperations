@@ -1,7 +1,7 @@
 import React from 'react';
 import './DashboardCard.css';
 
-const DashboardCard = ({ title, icon, colorClass, subtitle, href }) => {
+const DashboardCard = ({ title, icon, colorClass, subtitle, href, onClick }) => {
   const cardContent = (
     <>
       <div className="dashboard-card-icon">{icon}</div>
@@ -25,7 +25,11 @@ const DashboardCard = ({ title, icon, colorClass, subtitle, href }) => {
     );
   }
 
-  return <div className={`dashboard-card ${colorClass}`}>{cardContent}</div>;
+  return (
+    <button type="button" className={`dashboard-card ${colorClass}`} onClick={onClick}>
+      {cardContent}
+    </button>
+  );
 };
 
 export default DashboardCard;

@@ -1,0 +1,116 @@
+.search-panel {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto 20px;
+  border: 2px solid rgb(226, 126, 44);
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+  background: #ffffff;
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.search-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: #ffffff;
+  color: #111827;
+}
+
+.search-row input::placeholder {
+  color: #64748b;
+}
+
+.search-row button {
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 14px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 220px));
+  gap: 16px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.summary-card,
+.trip-table-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgb(226, 126, 44);
+  border-radius: 20px;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+}
+
+.summary-card {
+  padding: 16px;
+  min-width: 0;
+  max-width: 220px;
+  width: 100%;
+}
+
+.summary-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.summary-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.trip-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(180px, 220px));
+  }
+}
+
+@media (max-width: 760px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trip-table-header,
+.trip-table-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px 16px;
+}
+
+.trip-table-header {
+  background: rgb(226, 126, 44);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.trip-table-row:nth-child(even) {
+  background: #f8fafc;
+}

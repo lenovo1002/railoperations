@@ -2,27 +2,41 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './DashboardGrid.css';
 import './DutyDetailsPage.css';
 
-const testDutyData = {
-  dutyNo: 'PDC',
-  signOnTime: '4:15',
-  signOnLocation: 'RHD',
-  signOffTime: '12:00',
-  signOffLocation: 'DHO',
-  totalTrips: '0',
-  dutyHours: '8:00',
-  trainRunningHours: '5:21',
-  trips: [
-    { trainNo: '101', tripFrom: 'RHD', tripTo: 'DHO', tripStartLocation: 'CVC UP', tripEndLocation: 'CVC UP', line: 'Line 1', breakTime: '0:45' },
-    { trainNo: '108', tripFrom: 'DHO', tripTo: 'RHD', tripStartLocation: 'CVC UP', tripEndLocation: 'CVC UP', line: 'Line 1', breakTime: '1:08' },
-    { trainNo: '107', tripFrom: 'RHD', tripTo: 'DHO', tripStartLocation: 'CVC UP', tripEndLocation: 'CVC UP', line: 'Line 1', breakTime: '0:24' },
-    { trainNo: '105', tripFrom: 'DHO', tripTo: 'RHD', tripStartLocation: 'CVC UP', tripEndLocation: 'CVC UP', line: 'Line 1', breakTime: '1:16' },
-  ],
+const API_BASE_URL = 'http://localhost:8080';
+
+const toMinutes = (value) => {
+  if (!value) return 0;
+  const [hours = 0, minutes = 0] = value.split(':').map(Number);
+  return hours * 60 + minutes;
 };
 
-const DutyDetailsPage = ({ onBack }) => {
+const formatDuration = (totalMinutes) => {
+  if (!Number.isFinite(totalMinutes) || totalMinutes < 0) return '-';
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours}:${String(minutes).padStart(2, '0')}`;
+};
+
+const calculateDuration = (startTime, endTime) => {
+  const durationMinutes = toMinutes(endTime) - toMinutes(startTime);
+  return formatDuration(durationMinutes);
+};
+
+const calculateTripDuration = (tripTime = []) => {
+  if (!tripTime.length) return '-';
+  const totalMinutes = tripTime.reduce((total, trip) => {
+    const tripDuration = toMinutes(trip.tripEndTime) - toMinutes(trip.tripStartTime);
+    return total + Math.max(0, tripDuration);
+  }, 0);
+  return formatDuration(totalMinutes);
+};
+
+const DutyDetailsPage = ({ onBack, onNotify }) => {
   const [dutyNumber, setDutyNumber] = useState('');
   const [dutyData, setDutyData] = useState(null);
   const [clockValue, setClockValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const formatClock = () => {
@@ -54,9 +68,59 @@ const DutyDetailsPage = ({ onBack }) => {
     ];
   }, [dutyData]);
 
-  const handleSearch = (event) => {
+  const handleSearch = async (event) => {
     event.preventDefault();
-    setDutyData(testDutyData);
+    const trimmedDutyNumber = dutyNumber.trim();
+
+    if (!trimmedDutyNumber) {
+      setDutyData(null);
+      setErrorMessage('Please enter a duty number.');
+      onNotify?.('Please enter a duty number.', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMessage('');
+    onNotify?.(`Fetching duty ${trimmedDutyNumber} from the server...`, 'info');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/tripchart/${encodeURIComponent(trimmedDutyNumber)}`);
+
+      if (!response.ok) {
+        throw new Error('Unable to load duty details from the server.');
+      }
+
+      const payload = await response.json();
+      const normalizedDutyData = {
+        dutyNo: payload.dutyNo,
+        signOnTime: payload.signOnTime,
+        signOnLocation: payload.signOnLocation,
+        signOffTime: payload.signOffTime,
+        signOffLocation: payload.signOffLocation,
+        totalTrips: payload.tripTime?.length ?? 0,
+        dutyHours: calculateDuration(payload.signOnTime, payload.signOffTime),
+        trainRunningHours: calculateTripDuration(payload.tripTime || []),
+        trips: (payload.tripTime || []).map((trip) => ({
+          trainNo: trip.trainId,
+          tripFrom: trip.tripStartsFrom,
+          tripTo: trip.tripEndsAt,
+          tripStartLocation: trip.tripStartsFrom,
+          tripEndLocation: trip.tripEndsAt,
+          line: 'Line 1',
+          breakTime: trip.breakTime,
+        })),
+      };
+
+      setDutyData(normalizedDutyData);
+      onNotify?.(`Duty ${trimmedDutyNumber} loaded successfully.`, 'success');
+    } catch (error) {
+      const message = error.message || 'Unable to load duty details from the server.';
+      setDutyData(null);
+      setErrorMessage(message);
+      onNotify?.(message, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -86,11 +150,13 @@ const DutyDetailsPage = ({ onBack }) => {
                 onChange={(event) => setDutyNumber(event.target.value)}
                 placeholder="Enter duty number eg 101"
               />
-              <button type="submit">
-                Search
+              <button type="submit" disabled={isLoading}>
+                {isLoading ? 'Searching...' : 'Search'}
               </button>
             </form>
           </section>
+
+          {errorMessage && <p role="alert" className="search-error">{errorMessage}</p>}
 
           {dutyData && (
             <>

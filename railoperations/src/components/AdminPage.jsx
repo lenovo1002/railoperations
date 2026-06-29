@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import DashboardCard from './DashboardCard';
 import './DashboardGrid.css';
 
+const API_BASE_URL = 'http://localhost:8080';
+const locationOptions = ['RHD', 'CVC', 'PIM', 'VNZ', 'RAM'];
+const tripLocationOptions = ['CVC_UP', 'CVC_DN', 'SJO_UP', 'KHK_DN', 'PIM_UP', 'SGT_UP', 'VNZ_UP'];
+
 const initialTrip = {
   trainNo: '',
   tripFrom: '',
@@ -13,7 +17,7 @@ const initialTrip = {
 
 const initialFormState = {
   dutyNo: '',
-  line: 'Line 1',
+  line: '',
   signOnTime: '',
   signOnLocation: '',
   signOffLocation: '',
@@ -28,10 +32,12 @@ const adminCards = [
   { title: 'Announcements', icon: '📢', colorClass: 'card-pink' },
 ];
 
-const AdminPage = ({ onLogout }) => {
+const AdminPage = ({ onLogout, onNotify }) => {
   const [clockValue, setClockValue] = useState('');
   const [showDutyModal, setShowDutyModal] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     const formatClock = () => {
@@ -51,6 +57,7 @@ const AdminPage = ({ onLogout }) => {
 
   const handleCardClick = (title) => {
     if (title === 'Add Duty') {
+      setSubmitError('');
       setFormData(initialFormState);
       setShowDutyModal(true);
     }
@@ -83,17 +90,62 @@ const AdminPage = ({ onLogout }) => {
   };
 
   const resetForm = () => {
+    setSubmitError('');
     setFormData(initialFormState);
   };
 
   const closeModal = () => {
+    setSubmitError('');
     setShowDutyModal(false);
     setFormData(initialFormState);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    closeModal();
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      const payload = {
+        dutyNo: Number(formData.dutyNo),
+        signOnLocation: formData.signOnLocation,
+        signOnTime: formData.signOnTime,
+        signOffLocation: formData.signOffLocation,
+        signOffTime: formData.signOffTime,
+        line: formData.line,
+        tripTime: formData.trips.map((trip) => ({
+          trainId: Number(trip.trainNo),
+          breakTime: trip.breakTime,
+          tripStartTime: trip.tripStartTime,
+          tripEndTime: trip.tripEndTime,
+          tripStartsFrom: trip.tripFrom,
+          tripEndsAt: trip.tripTo,
+        })),
+      };
+
+      onNotify?.('Submitting duty to the server...', 'info');
+
+      const response = await fetch(`${API_BASE_URL}/tripchart/addtrip`,  {
+        
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Unable to save duty to the server.');
+        
+      }
+
+      onNotify?.(`Duty ${payload.dutyNo} added successfully.`, 'success');
+      closeModal();
+    } catch (error) {
+      const message = error.message || 'Unable to save duty to the server.';
+      setSubmitError(message);
+      onNotify?.(message, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -151,8 +203,9 @@ const AdminPage = ({ onLogout }) => {
                 <label className="modal-field duty-field">
                   <span>Line</span>
                   <select name="line" value={formData.line} onChange={handleFieldChange}>
-                    <option value="Line 1">Line 1</option>
-                    <option value="Line 2">Line 2</option>
+                    <option value ="">Select line</option>
+                    <option value="Line1">Line 1</option>
+                    <option value="Line2">Line 2</option>
                   </select>
                 </label>
                 <label className="modal-field duty-field">
@@ -161,7 +214,14 @@ const AdminPage = ({ onLogout }) => {
                 </label>
                 <label className="modal-field duty-field">
                   <span>Sign On Location</span>
-                  <input name="signOnLocation" value={formData.signOnLocation} onChange={handleFieldChange} placeholder="e.g. RHD" />
+                  <select name="signOnLocation" value={formData.signOnLocation} onChange={handleFieldChange}>
+                    <option value="">Select location</option>
+                    {locationOptions.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </select>
                 </label>
                 <label className="modal-field duty-field">
                   <span>Sign Off Time</span>
@@ -169,7 +229,14 @@ const AdminPage = ({ onLogout }) => {
                 </label>
                 <label className="modal-field duty-field">
                   <span>Sign Off Location</span>
-                  <input name="signOffLocation" value={formData.signOffLocation} onChange={handleFieldChange} placeholder="e.g. DHO" />
+                  <select name="signOffLocation" value={formData.signOffLocation} onChange={handleFieldChange}>
+                    <option value="">Select location</option>
+                    {locationOptions.map((location) => (
+                      <option key={location} value={location}>
+                        {location}
+                      </option>
+                    ))}
+                  </select>
                 </label>
               </div>
 
@@ -203,11 +270,25 @@ const AdminPage = ({ onLogout }) => {
                       </label>
                       <label className="modal-field duty-field">
                         <span>Trip From</span>
-                        <input name="tripFrom" value={trip.tripFrom} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. RHD" />
+                        <select name="tripFrom" value={trip.tripFrom} onChange={(event) => handleTripChange(index, event)}>
+                          <option value="">Select trip point</option>
+                          {tripLocationOptions.map((location) => (
+                            <option key={location} value={location}>
+                              {location}
+                            </option>
+                          ))}
+                        </select>
                       </label>
                       <label className="modal-field duty-field">
                         <span>Trip To</span>
-                        <input name="tripTo" value={trip.tripTo} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. DHO" />
+                        <select name="tripTo" value={trip.tripTo} onChange={(event) => handleTripChange(index, event)}>
+                          <option value="">Select trip point</option>
+                          {tripLocationOptions.map((location) => (
+                            <option key={location} value={location}>
+                              {location}
+                            </option>
+                          ))}
+                        </select>
                       </label>
                       
                       <label className="modal-field duty-field">
@@ -227,10 +308,12 @@ const AdminPage = ({ onLogout }) => {
                 <button type="button" className="modal-button secondary" onClick={resetForm}>
                   Reset
                 </button>
-                <button type="submit" className="modal-button primary">
-                  Submit
+                <button type="submit" className="modal-button primary" disabled={isSubmitting}>
+                  {isSubmitting ? 'Submitting...' : 'Submit'}
                 </button>
               </div>
+
+              {submitError && <p role="alert" className="form-feedback error">{submitError}</p>}
             </form>
           </div>
         </div>

@@ -12,6 +12,7 @@ function App() {
   const [showPassword, setShowPassword] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [activePage, setActivePage] = useState('home');
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     const formatClock = () => {
@@ -74,12 +75,42 @@ function App() {
     };
   }, []);
 
+  const notify = (message, type = 'info') => {
+    const id = Date.now() + Math.random();
+    setNotifications((prev) => [...prev, { id, message, type }]);
+    window.setTimeout(() => {
+      setNotifications((prev) => prev.filter((item) => item.id !== id));
+    }, 3000);
+  };
+
   if (isAdminLoggedIn) {
-    return <AdminPage onLogout={() => setIsAdminLoggedIn(false)} />;
+    return (
+      <>
+        <AdminPage onLogout={() => setIsAdminLoggedIn(false)} onNotify={notify} />
+        <div className="toast-stack" aria-live="polite" aria-atomic="true">
+          {notifications.map((item) => (
+            <div key={item.id} className={`toast-item toast-${item.type}`}>
+              {item.message}
+            </div>
+          ))}
+        </div>
+      </>
+    );
   }
 
   if (activePage === 'duty-details') {
-    return <DutyDetailsPage onBack={() => setActivePage('home')} />;
+    return (
+      <>
+        <DutyDetailsPage onBack={() => setActivePage('home')} onNotify={notify} />
+        <div className="toast-stack" aria-live="polite" aria-atomic="true">
+          {notifications.map((item) => (
+            <div key={item.id} className={`toast-item toast-${item.type}`}>
+              {item.message}
+            </div>
+          ))}
+        </div>
+      </>
+    );
   }
 
   return (
@@ -123,6 +154,14 @@ function App() {
           All trademarks, logos, and brand names are the property of their respective owners and are used only for identification and informational purposes. The developer makes every effort to provide accurate information; however, this website should not be considered an official source. For official announcements, schedules, fares, and other services, please refer to the official Maha Metro website.<br /><br />
           © 2026 Raj Shantaram Parsharam. All rights reserved.
         </footer>
+      </div>
+
+      <div className="toast-stack" aria-live="polite" aria-atomic="true">
+        {notifications.map((item) => (
+          <div key={item.id} className={`toast-item toast-${item.type}`}>
+            {item.message}
+          </div>
+        ))}
       </div>
 
       {showAdminModal && (

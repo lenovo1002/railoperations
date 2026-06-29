@@ -304,6 +304,40 @@ body {
   padding: 4px;
 }
 
+.toast-stack {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-item {
+  min-width: 240px;
+  max-width: 320px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+  pointer-events: auto;
+}
+
+.toast-info {
+  background: #2563eb;
+}
+
+.toast-success {
+  background: #16a34a;
+}
+
+.toast-error {
+  background: #dc2626;
+}
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;

@@ -7,6 +7,8 @@ const initialTrip = {
   tripFrom: '',
   tripTo: '',
   breakTime: '',
+  tripStartTime: '',
+  tripEndTime: '',
 };
 
 const initialFormState = {
@@ -196,6 +198,10 @@ const AdminPage = ({ onLogout }) => {
                         <input name="trainNo" value={trip.trainNo} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. 101" />
                       </label>
                       <label className="modal-field duty-field">
+                        <span>Break Time</span>
+                        <input name="breakTime" value={trip.breakTime} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. 00:45" />
+                      </label>
+                      <label className="modal-field duty-field">
                         <span>Trip From</span>
                         <input name="tripFrom" value={trip.tripFrom} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. RHD" />
                       </label>
@@ -203,9 +209,14 @@ const AdminPage = ({ onLogout }) => {
                         <span>Trip To</span>
                         <input name="tripTo" value={trip.tripTo} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. DHO" />
                       </label>
+                      
                       <label className="modal-field duty-field">
-                        <span>Break Time</span>
-                        <input name="breakTime" value={trip.breakTime} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. 00:45" />
+                        <span>Trip Start Time</span>
+                        <input name="tripStartTime" type="time" value={trip.tripStartTime} onChange={(event) => handleTripChange(index, event)} />
+                      </label>
+                      <label className="modal-field duty-field">
+                        <span>Trip End Time</span>
+                        <input name="tripEndTime" type="time" value={trip.tripEndTime} onChange={(event) => handleTripChange(index, event)} />
                       </label>
                     </div>
                   </div>

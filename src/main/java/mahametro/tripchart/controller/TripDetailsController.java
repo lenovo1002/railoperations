@@ -14,6 +14,7 @@ import mahametro.tripchart.entity.TripDetails;
 import mahametro.tripchart.service.TripChartService;
 @RestController
 @RequestMapping("tripchart")
+@CrossOrigin("http://localhost:3000")
 public class TripDetailsController {
 	
 	@Autowired

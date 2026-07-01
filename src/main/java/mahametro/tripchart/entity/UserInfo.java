@@ -1,11 +1,15 @@
 package mahametro.tripchart.entity;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import mahametro.tripchart.enums.Role;
 
 @Entity
 @Table(name="jwt_userinfo")
@@ -18,7 +22,9 @@ public class UserInfo {
     private String name;
     private String email;
     private String password;
-    private String roles;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role" ,length = 7)
+    private Role roles;
 	public int getId() {
 		return id;
 	}
@@ -43,18 +49,16 @@ public class UserInfo {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public String getRoles() {
+	public Role getRoles() {
 		return roles;
 	}
-	public void setRoles(String roles) {
-		this.roles = roles;
-	}
-	public UserInfo(String name, String email, String password, String roles) {
+	
+	public UserInfo(String name, String email, String password) {
 		super();
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.roles = roles;
+		this.roles = Role.ADMIN ;
 	}
     
 	public UserInfo() {}

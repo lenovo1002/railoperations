@@ -43,6 +43,12 @@ public class TripDetails {
 	@Enumerated(EnumType.STRING)
 	private Line line;
 	
+	@Column(name = "train_running_hours")
+	private LocalTime trainRunningHours;
+	
+	@Column(name = "duty_hours")
+	private LocalTime dutyHours;
+	
 	@JsonManagedReference
     @OneToMany(
             mappedBy = "tripDetails",

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import mahametro.tripchart.entity.UserInfo;
 import mahametro.tripchart.repository.UserInfoRepository;
 
-
 @Component
 public class UserInfoUserDetailsService implements UserDetailsService {
 	

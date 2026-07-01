@@ -2,6 +2,9 @@ package mahametro.tripchart.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +28,15 @@ public class TripDetailsController {
 		return tripService.getTripDetails(dutyNo);
 	}
 	
-	@PostMapping("addtrip")
+	@PostMapping("/addtrip")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> addTrip (@RequestBody TripDetails tripDetails) {
-		
-		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		System.out.println("Authentication = " + auth);
+		System.out.println("Principal = " + auth.getPrincipal());
+		System.out.println("Authorities = " + auth.getAuthorities());
+		System.out.println("Authenticated = " + auth.isAuthenticated());
 		return tripService.addTrip(tripDetails);
 	}
 	

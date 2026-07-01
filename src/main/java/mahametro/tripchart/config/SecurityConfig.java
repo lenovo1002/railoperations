@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,9 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import mahametro.tripchart.filter.JWTAuthFilter;
-
+import java.util.List;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -41,12 +44,38 @@ public class SecurityConfig {
 
 	@Bean
 	public AuthenticationProvider authProvider() {
-		DaoAuthenticationProvider authenticProvider= new DaoAuthenticationProvider();
-		authenticProvider.setUserDetailsService(userDetailsService());
-		authenticProvider.setPasswordEncoder(passwordEncoder());
-		return authenticProvider;
+//		DaoAuthenticationProvider authenticProvider= new DaoAuthenticationProvider();
+//		authenticProvider.setUserDetailsService(userDetailsService());
+//		authenticProvider.setPasswordEncoder(passwordEncoder());
+//		return authenticProvider;
 		
+		    DaoAuthenticationProvider provider =
+		            new DaoAuthenticationProvider(userDetailsService());
+
+		    provider.setPasswordEncoder(passwordEncoder());
+
+		    return provider;
+		}
+	
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+
+	    CorsConfiguration configuration = new CorsConfiguration();
+
+	    configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+	    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	    configuration.setAllowedHeaders(List.of("*"));
+	    configuration.setAllowCredentials(true);
+
+	    UrlBasedCorsConfigurationSource source =
+	            new UrlBasedCorsConfigurationSource();
+
+	    source.registerCorsConfiguration("/**", configuration);
+
+	    return source;
 	}
+		
+	
 	
 	@Bean
 	public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception{
@@ -57,16 +86,38 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		
-		return http.csrf().disable()
-				.authorizeHttpRequests()
-				// Need to Permit for New Registration and Login
-				.requestMatchers("/users/new","/users/authenticate").permitAll().and()
-				.authorizeHttpRequests().requestMatchers("/products/**")
-				.authenticated().and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and().authenticationProvider(authProvider())
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-				.build();
+//		return http.csrf().disable()
+//				.authorizeHttpRequests()
+//				// Need to Permit for New Registration and Login
+//				.requestMatchers("/users/new","/users/authenticate").permitAll().and()
+//				.authorizeHttpRequests().requestMatchers("/products/**")
+//				.authenticated().and()
+//				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//				.and().authenticationProvider(authProvider())
+//				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//				.build();
+		
+		
+
+		    return http
+		    		.cors(Customizer.withDefaults())
+		            .csrf(csrf -> csrf.disable())
+		            
+
+		            .authorizeHttpRequests(auth -> auth
+		                    .requestMatchers("/admin/new", "/admin/authenticate" , "/admin/welcome" , "/tripchart/test" , "/tripchart/*").permitAll()
+		                    .requestMatchers("/tripchart/addtrip").authenticated()
+		                    .anyRequest().authenticated()
+		            )
+
+		            .sessionManagement(session ->
+		                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		            )
+
+		            .authenticationProvider(authProvider())
+		            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+
+		            .build();
 				
 	}
 }

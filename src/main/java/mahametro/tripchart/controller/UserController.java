@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import mahametro.tripchart.dto.AuthResponse;
 import mahametro.tripchart.entity.AuthRequest;
 import mahametro.tripchart.entity.UserInfo;
 import mahametro.tripchart.service.JWTService;
@@ -42,7 +43,7 @@ public class UserController {
 	}
 	
 	@PostMapping(value="/authenticate")
-	public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+	public AuthResponse authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
 		Authentication authObj=authManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(),
 				authRequest.getPassword()));
 		

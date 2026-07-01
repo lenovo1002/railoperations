@@ -2,6 +2,7 @@ package mahametro.tripchart.service;
 
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,25 +10,25 @@ import java.util.function.Function;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import mahametro.tripchart.dto.AuthResponse;
 
 @Component
 public class JWTService {
 
 	
-	public static final String SECRET="NareshITJWTSecretSpringBoot7PMBatchNareshITJWTSecretSpringBoot7PMBatchNareshITJWTSecretSpringBoot7PMBatch";
+	public static final String SECRET="PuneMetroTrainOperatorsPuneMetroTrainOperatorsPuneMetroTrainOperators";
 	
 	//Create Token
 	
-	public String generateToken(String userName) {
+	public AuthResponse generateToken(String userName) {
 		Map<String,Object> claims=new HashMap<>(); //Data Inside Token
-		return creatToken(claims,userName);
+		return new AuthResponse(creatToken(claims,userName)) ;
 	}
 	
 	public String creatToken(Map<String,Object> claims,String userName) {
@@ -35,7 +36,7 @@ public class JWTService {
 		
 		return Jwts.builder().setClaims(claims).setSubject(userName)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30)).
+				.setExpiration(new Date(System.currentTimeMillis()+ Duration.ofMinutes(60).toMillis())).
 				signWith(getSignKey(),SignatureAlgorithm.HS256).compact();
 				
 	}

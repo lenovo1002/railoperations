@@ -31,6 +31,8 @@ public class TripChartService {
 	public ResponseEntity<?> getTripDetails(Integer dutyNo){
 		if (!tripRepo.existsById(dutyNo)) return ResponseEntity.notFound().header("MSG", "Duty number not found ! ").build() ;
 		TripDetails tripInfo = tripRepo.getById(dutyNo);
+		System.out.println(tripInfo.toString());
+		
 		return ResponseEntity.ok(tripInfo);
 	}
 

@@ -26,11 +26,16 @@ public class TripDetailsController {
 	@GetMapping("/{dutyNo}")
 	public ResponseEntity<?> getByDutyNo(@PathVariable Integer dutyNo) {
 		return tripService.getTripDetails(dutyNo);
+		
+		
 	}
 	
 	@PostMapping("/addtrip")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> addTrip (@RequestBody TripDetails tripDetails) {
+		
+		
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		System.out.println("Authentication = " + auth);

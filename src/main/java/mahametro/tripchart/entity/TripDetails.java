@@ -60,7 +60,8 @@ public class TripDetails {
 	public TripDetails () {}
 
 	public TripDetails(Integer dutyNo, SignOnOffLocation signOnLocation, LocalTime signOnTime,
-			SignOnOffLocation signOffLocation, LocalTime signOffTime, Line line, List<TripTime> tripTime) {
+			SignOnOffLocation signOffLocation, LocalTime signOffTime, Line line, LocalTime trainRunningHours,
+			LocalTime dutyHours, List<TripTime> tripTime) {
 		super();
 		this.dutyNo = dutyNo;
 		this.signOnLocation = signOnLocation;
@@ -68,6 +69,8 @@ public class TripDetails {
 		this.signOffLocation = signOffLocation;
 		this.signOffTime = signOffTime;
 		this.line = line;
+		this.trainRunningHours = trainRunningHours;
+		this.dutyHours = dutyHours;
 		this.tripTime = tripTime;
 	}
 
@@ -93,6 +96,14 @@ public class TripDetails {
 
 	public Line getLine() {
 		return line;
+	}
+
+	public LocalTime getTrainRunningHours() {
+		return trainRunningHours;
+	}
+
+	public LocalTime getDutyHours() {
+		return dutyHours;
 	}
 
 	public List<TripTime> getTripTime() {
@@ -123,6 +134,14 @@ public class TripDetails {
 		this.line = line;
 	}
 
+	public void setTrainRunningHours(LocalTime trainRunningHours) {
+		this.trainRunningHours = trainRunningHours;
+	}
+
+	public void setDutyHours(LocalTime dutyHours) {
+		this.dutyHours = dutyHours;
+	}
+
 	public void setTripTime(List<TripTime> tripTime) {
 		this.tripTime = tripTime;
 	}
@@ -131,8 +150,12 @@ public class TripDetails {
 	public String toString() {
 		return "TripDetails [dutyNo=" + dutyNo + ", signOnLocation=" + signOnLocation + ", signOnTime=" + signOnTime
 				+ ", signOffLocation=" + signOffLocation + ", signOffTime=" + signOffTime + ", line=" + line
-				+ ", tripTime=" + tripTime + "]";
+				+ ", trainRunningHours=" + trainRunningHours + ", dutyHours=" + dutyHours + "]";
 	}
+
+	
+
+	
 
 		
 

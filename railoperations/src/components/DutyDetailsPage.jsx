@@ -4,32 +4,13 @@ import './DutyDetailsPage.css';
 
 const API_BASE_URL = 'http://localhost:8080';
 
-const toMinutes = (value) => {
-  if (!value) return 0;
-  const [hours = 0, minutes = 0] = value.split(':').map(Number);
-  return hours * 60 + minutes;
-};
 
-const formatDuration = (totalMinutes) => {
-  if (!Number.isFinite(totalMinutes) || totalMinutes < 0) return '-';
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return `${hours}:${String(minutes).padStart(2, '0')}`;
-};
 
-const calculateDuration = (startTime, endTime) => {
-  const durationMinutes = toMinutes(endTime) - toMinutes(startTime);
-  return formatDuration(durationMinutes);
-};
 
-const calculateTripDuration = (tripTime = []) => {
-  if (!tripTime.length) return '-';
-  const totalMinutes = tripTime.reduce((total, trip) => {
-    const tripDuration = toMinutes(trip.tripEndTime) - toMinutes(trip.tripStartTime);
-    return total + Math.max(0, tripDuration);
-  }, 0);
-  return formatDuration(totalMinutes);
-};
+
+
+
+
 
 const DutyDetailsPage = ({ onBack, onNotify }) => {
   const [dutyNumber, setDutyNumber] = useState('');
@@ -85,6 +66,7 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
 
     try {
       const response = await fetch(`${API_BASE_URL}/tripchart/${encodeURIComponent(trimmedDutyNumber)}`);
+     
 
       if (!response.ok) {
         throw new Error('Unable to load duty details from the server.');
@@ -98,15 +80,15 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
         signOffTime: payload.signOffTime,
         signOffLocation: payload.signOffLocation,
         totalTrips: payload.tripTime?.length ?? 0,
-        dutyHours: calculateDuration(payload.signOnTime, payload.signOffTime),
-        trainRunningHours: calculateTripDuration(payload.tripTime || []),
+        dutyHours: payload.dutyHours || '',
+        trainRunningHours: payload.trainRunningHours || '',
         trips: (payload.tripTime || []).map((trip) => ({
           trainNo: trip.trainId,
-          tripFrom: trip.tripStartsFrom,
-          tripTo: trip.tripEndsAt,
+          tripFrom: trip.tripStartTime,
+          tripTo: trip.tripEndTime,
           tripStartLocation: trip.tripStartsFrom,
           tripEndLocation: trip.tripEndsAt,
-          line: 'Line 1',
+          line: payload.line || 'Line 1',
           breakTime: trip.breakTime,
         })),
       };
@@ -172,8 +154,8 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
               <section className="trip-table-card">
                 <div className="trip-table-header">
                   <span>Train No</span>
-                  <span>Trip From</span>
-                  <span>Trip To</span>
+                  <span>Trip Start Time</span>
+                  <span>Trip End Time</span>
                   <span>Trip Start Location</span>
                   <span>Trip End Location</span>
                   <span>Line</span>

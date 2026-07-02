@@ -22,6 +22,8 @@ const initialFormState = {
   signOnLocation: '',
   signOffLocation: '',
   signOffTime: '',
+  dutyHours: '',
+  trainRunningHours: '',
   trips: [{ ...initialTrip }],
 };
 
@@ -32,7 +34,7 @@ const adminCards = [
   { title: 'Announcements', icon: '📢', colorClass: 'card-pink' },
 ];
 
-const AdminPage = ({ onLogout, onNotify }) => {
+const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
   const [clockValue, setClockValue] = useState('');
   const [showDutyModal, setShowDutyModal] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
@@ -99,6 +101,9 @@ const AdminPage = ({ onLogout, onNotify }) => {
     setShowDutyModal(false);
     setFormData(initialFormState);
   };
+  
+
+ 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -112,6 +117,8 @@ const AdminPage = ({ onLogout, onNotify }) => {
         signOnTime: formData.signOnTime,
         signOffLocation: formData.signOffLocation,
         signOffTime: formData.signOffTime,
+        dutyHours: formData.dutyHours,
+        trainRunningHours: formData.trainRunningHours,
         line: formData.line,
         tripTime: formData.trips.map((trip) => ({
           trainId: Number(trip.trainNo),
@@ -124,11 +131,17 @@ const AdminPage = ({ onLogout, onNotify }) => {
       };
 
       onNotify?.('Submitting duty to the server...', 'info');
+      
 
-      const response = await fetch(`${API_BASE_URL}/tripchart/addtrip`,  {
+      const headers = { 'Content-Type': 'application/json' };
+      if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
         
+      }
+
+      const response = await fetch(`${API_BASE_URL}/tripchart/addtrip`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload),
       });
 
@@ -158,9 +171,9 @@ const AdminPage = ({ onLogout, onNotify }) => {
           </div>
         </div>
         <div className="top-bar-right">
-          <button className="nav-button admin-button" type="button" onClick={onLogout}>
-            <span className="admin-icon">🚪</span>
-            <span className="admin-label">Logout</span>
+          <button className="nav-button admin-button" type="button" onClick={onHome}>
+            <span className="admin-icon">🏠</span>
+            <span className="admin-label">Home</span>
           </button>
         </div>
       </div>
@@ -198,7 +211,7 @@ const AdminPage = ({ onLogout, onNotify }) => {
               <div className="duty-form-grid">
                 <label className="modal-field duty-field">
                   <span>Duty No</span>
-                  <input name="dutyNo" value={formData.dutyNo} onChange={handleFieldChange} placeholder="e.g. PDC-101" />
+                  <input name="dutyNo" value={formData.dutyNo} onChange={handleFieldChange} placeholder="e.g. 101" />
                 </label>
                 <label className="modal-field duty-field">
                   <span>Line</span>
@@ -238,6 +251,18 @@ const AdminPage = ({ onLogout, onNotify }) => {
                     ))}
                   </select>
                 </label>
+
+                <label className="modal-field duty-field">
+                  <span>Duty Hours</span>
+                  <input name="dutyHours" type="time" value={formData.dutyHours} onChange={handleFieldChange} />
+                </label>
+                <label className="modal-field duty-field">
+                  <span>Train Running Hours</span>
+                  <input name="trainRunningHours" type="time" value={formData.trainRunningHours} onChange={handleFieldChange} />
+                </label>
+
+
+
               </div>
 
               <div className="trip-section">
@@ -264,9 +289,10 @@ const AdminPage = ({ onLogout, onNotify }) => {
                         <span>Train No</span>
                         <input name="trainNo" value={trip.trainNo} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. 101" />
                       </label>
+
                       <label className="modal-field duty-field">
                         <span>Break Time</span>
-                        <input name="breakTime" value={trip.breakTime} onChange={(event) => handleTripChange(index, event)} placeholder="e.g. 00:45" />
+                        <input name="breakTime" value={trip.breakTime} type='time' onChange={(event) => handleTripChange(index, event)} placeholder="e.g. 00:45" />
                       </label>
                       <label className="modal-field duty-field">
                         <span>Trip From</span>

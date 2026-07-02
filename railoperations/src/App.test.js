@@ -12,8 +12,31 @@ test('opens the admin login modal when the admin button is clicked', () => {
   expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
 });
 
+test('authenticates the admin and stores the returned token', async () => {
+  const mockFetch = jest.fn()
+    .mockResolvedValueOnce({ ok: true, json: async () => ({ token: 'jwt-token' }) })
+    .mockResolvedValue({ ok: true, json: async () => ({ success: true }) });
+  global.fetch = mockFetch;
+
+  render(<App />);
+
+  fireEvent.click(screen.getByRole('button', { name: /admin login/i }));
+  fireEvent.change(screen.getByLabelText(/login id/i), { target: { value: 'admin' } });
+  fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password' } });
+  fireEvent.click(screen.getByRole('button', { name: /^login$/i }));
+
+  expect(mockFetch).toHaveBeenCalledWith(
+    'http://localhost:8080/admin/authenticate',
+    expect.objectContaining({
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'admin', password: 'password' }),
+    })
+  );
+});
+
 test('shows trip start and end time fields in the add duty form', () => {
-  render(<AdminPage onLogout={() => {}} />);
+  render(<AdminPage onLogout={() => {}} adminToken="mock-token" />);
 
   fireEvent.click(screen.getByRole('button', { name: /add duty/i }));
 
@@ -22,7 +45,7 @@ test('shows trip start and end time fields in the add duty form', () => {
 });
 
 test('renders the requested location options in the add duty form', () => {
-  render(<AdminPage onLogout={() => {}} />);
+  render(<AdminPage onLogout={() => {}} adminToken="mock-token" />);
 
   fireEvent.click(screen.getByRole('button', { name: /add duty/i }));
 
@@ -35,7 +58,7 @@ test('submits the duty form payload to the backend when the form is submitted', 
   const mockFetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ success: true }) });
   global.fetch = mockFetch;
 
-  render(<AdminPage onLogout={() => {}} />);
+  render(<AdminPage onLogout={() => {}} adminToken="mock-token" />);
 
   fireEvent.click(screen.getByRole('button', { name: /add duty/i }));
 
@@ -57,7 +80,10 @@ test('submits the duty form payload to the backend when the form is submitted', 
     'http://localhost:8080/tripchart/addtrip',
     expect.objectContaining({
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: expect.objectContaining({
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer mock-token',
+      }),
     })
   );
 });

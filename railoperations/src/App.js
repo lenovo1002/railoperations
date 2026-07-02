@@ -4,15 +4,35 @@ import DashboardGrid from './components/DashboardGrid';
 import AdminPage from './components/AdminPage';
 import DutyDetailsPage from './components/DutyDetailsPage';
 
+const API_BASE_URL = 'http://localhost:8080';
+
 function App() {
   const [clockValue, setClockValue] = useState('');
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [adminToken, setAdminToken] = useState(() => window.localStorage.getItem('adminToken') || '');
+  const [tokenExpiresAt, setTokenExpiresAt] = useState(() => Number(window.localStorage.getItem('adminTokenExpiresAt') || 0));
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => !!window.localStorage.getItem('adminToken'));
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const [activePage, setActivePage] = useState('home');
   const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    if (adminToken && tokenExpiresAt > Date.now()) {
+      setIsAdminLoggedIn(true);
+    } else if (adminToken) {
+      setAdminToken('');
+      setTokenExpiresAt(0);
+      setIsAdminLoggedIn(false);
+      setShowAdminModal(true);
+      window.localStorage.removeItem('adminToken');
+      window.localStorage.removeItem('adminTokenExpiresAt');
+    }
+  }, [adminToken, tokenExpiresAt]);
+
 
   useEffect(() => {
     const formatClock = () => {
@@ -30,9 +50,34 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (adminToken && tokenExpiresAt > Date.now()) {
+      window.localStorage.setItem('adminToken', adminToken);
+      window.localStorage.setItem('adminTokenExpiresAt', String(tokenExpiresAt));
+    } else {
+      window.localStorage.removeItem('adminToken');
+      window.localStorage.removeItem('adminTokenExpiresAt');
+    }
+  }, [adminToken, tokenExpiresAt]);
+
+  useEffect(() => {
+    if (!adminToken) return undefined;
+
+    const timeoutId = window.setTimeout(() => {
+      setAdminToken('');
+      setTokenExpiresAt(0);
+      setIsAdminLoggedIn(false);
+      setShowAdminModal(true);
+      notify('Admin session expired. Please log in again.', 'error');
+    }, Math.max(0, tokenExpiresAt - Date.now()));
+
+    return () => window.clearTimeout(timeoutId);
+  }, [adminToken, tokenExpiresAt]);
+
   // Ticker animation: start beside the right controls (bell/admin)
   const tickerRef = useRef(null);
   const tickerTextRef = useRef(null);
+  
 
   useEffect(() => {
     const container = tickerRef.current;
@@ -82,11 +127,86 @@ function App() {
       setNotifications((prev) => prev.filter((item) => item.id !== id));
     }, 3000);
   };
+  
+
+  const handleAdminLogin = async () => {
+    const trimmedLoginId = loginId.trim();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedLoginId || !trimmedPassword) {
+      setLoginError('Please enter both login ID and password.');
+      return;
+    }
+
+    setIsAuthenticating(true);
+    setLoginError('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/authenticate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: trimmedLoginId, password: trimmedPassword }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.token) {
+        throw new Error('Invalid admin credentials.');
+      }
+
+      setAdminToken(data.token);
+      setTokenExpiresAt(Date.now() + 60 * 60 * 1000);
+      setIsAdminLoggedIn(true);
+      setActivePage("admin");
+      setShowAdminModal(false);
+      setLoginId('');
+      setPassword('');
+      notify('Admin authenticated successfully.', 'success');
+    } catch (error) {
+      const message = error.message || 'Authentication failed.';
+      setLoginError(message);
+      notify(message, 'error');
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  const closeAdminModal = () => {
+    setShowAdminModal(false);
+    setLoginError('');
+    setPassword('');
+  };
+
+   const handleAdminClick = () => {
+  if (adminToken && tokenExpiresAt > Date.now()) {
+    setIsAdminLoggedIn(true);
+    setActivePage("admin");
+  } else {
+    setShowAdminModal(true);
+  }
+};
+
+  const handleLogout = () => {
+    setIsAdminLoggedIn(false);
+    setAdminToken('');
+    setTokenExpiresAt(0);
+
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminTokenExpiresAt");
+};
 
   if (isAdminLoggedIn) {
     return (
       <>
-        <AdminPage onLogout={() => setIsAdminLoggedIn(false)} onNotify={notify} />
+        <AdminPage
+   onHome={() => {
+    setIsAdminLoggedIn(false);
+    setActivePage("home");
+}}
+    onLogout={handleLogout}
+    adminToken={adminToken}
+    onNotify={notify}
+/>
         <div className="toast-stack" aria-live="polite" aria-atomic="true">
           {notifications.map((item) => (
             <div key={item.id} className={`toast-item toast-${item.type}`}>
@@ -131,7 +251,7 @@ function App() {
           <button
             className="nav-button admin-button"
             aria-label="Admin Login"
-            onClick={() => setShowAdminModal(true)}
+            onClick={() => {handleAdminClick();}}
           >
             <span className="admin-icon">👤</span>
             <span className="admin-label">Admin Login</span>
@@ -165,7 +285,7 @@ function App() {
       </div>
 
       {showAdminModal && (
-        <div className="modal-overlay" role="presentation" onClick={() => setShowAdminModal(false)}>
+        <div className="modal-overlay" role="presentation" onClick={closeAdminModal}>
           <div className="modal-backdrop" aria-hidden="true" />
           <div className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title" onClick={(event) => event.stopPropagation()}>
             <h2 id="admin-modal-title">Admin Login</h2>
@@ -192,19 +312,18 @@ function App() {
                 </button>
               </div>
             </label>
+            {loginError && <p role="alert" className="form-feedback error">{loginError}</p>}
             <div className="modal-actions">
-              <button type="button" className="modal-button secondary" onClick={() => setShowAdminModal(false)}>
+              <button type="button" className="modal-button secondary" onClick={closeAdminModal}>
                 Cancel
               </button>
               <button
                 type="button"
                 className="modal-button primary"
-                onClick={() => {
-                  setIsAdminLoggedIn(true);
-                  setShowAdminModal(false);
-                }}
+                onClick={handleAdminLogin}
+                disabled={isAuthenticating}
               >
-                Login
+                {isAuthenticating ? 'Authenticating...' : 'Login'}
               </button>
             </div>
           </div>

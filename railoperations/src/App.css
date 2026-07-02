@@ -267,6 +267,40 @@ body {
   color: #002450;
 }
 
+.consent-modal {
+  width: min(100%, 520px);
+}
+
+.consent-notice {
+  margin: 0 0 18px;
+  color: #1f2937;
+  line-height: 1.7;
+  font-size: 0.98rem;
+}
+
+.consent-checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.consent-checkbox-group input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: #002450;
+}
+
+.consent-timer-note {
+  margin: 0 0 18px;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
 .modal-field {
   display: flex;
   flex-direction: column;

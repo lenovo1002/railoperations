@@ -19,6 +19,9 @@ function App() {
   const [loginError, setLoginError] = useState('');
   const [activePage, setActivePage] = useState('home');
   const [notifications, setNotifications] = useState([]);
+  const [showConsent, setShowConsent] = useState(false);
+  const [consentChecked, setConsentChecked] = useState(false);
+  const [consentEnabled, setConsentEnabled] = useState(false);
 
   useEffect(() => {
     if (adminToken && tokenExpiresAt > Date.now()) {
@@ -32,6 +35,34 @@ function App() {
       window.localStorage.removeItem('adminTokenExpiresAt');
     }
   }, [adminToken, tokenExpiresAt]);
+
+  useEffect(() => {
+    const consentAccepted = window.localStorage.getItem('tripConsentAccepted') === 'true';
+    if (!consentAccepted) {
+      setShowConsent(true);
+      setConsentChecked(false);
+      setConsentEnabled(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!showConsent) return undefined;
+
+    const timer = window.setTimeout(() => setConsentEnabled(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [showConsent]);
+
+  const handleConsentChange = (event) => {
+    setConsentChecked(event.target.checked);
+  };
+
+  const acceptConsent = () => {
+    if (!consentEnabled || !consentChecked) return;
+
+    window.localStorage.setItem('tripConsentAccepted', 'true');
+    setShowConsent(false);
+    notify('Consent has been acknowledged. Thank you.', 'success');
+  };
 
 
   useEffect(() => {
@@ -324,6 +355,40 @@ function App() {
                 disabled={isAuthenticating}
               >
                 {isAuthenticating ? 'Authenticating...' : 'Login'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showConsent && (
+        <div className="modal-overlay" role="presentation">
+          <div className="modal-backdrop" aria-hidden="true" />
+          <div className="admin-modal consent-modal" role="dialog" aria-modal="true" aria-labelledby="consent-modal-title" onClick={(event) => event.stopPropagation()}>
+            <h2 id="consent-modal-title">Important Notice</h2>
+            <p className="consent-notice">
+              Trip timing data is currently under development and may contain inaccuracies. Please verify all timings against the official physical trip chart before making operational decisions. If you identify any errors, please submit a complaint so the information can be corrected.
+            </p>
+            <label className="consent-checkbox-group">
+              <input
+                type="checkbox"
+                checked={consentChecked}
+                onChange={handleConsentChange}
+                disabled={!consentEnabled}
+              />
+              I acknowledge that the trip time data is provisional and that I will confirm the official timings before relying on them.
+            </label>
+            <p className="consent-timer-note">
+              {consentEnabled ? 'The acknowledgement checkbox is now enabled.' : 'The acknowledgement checkbox will be enabled in 5 seconds.'}
+            </p>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-button primary"
+                onClick={acceptConsent}
+                disabled={!consentEnabled || !consentChecked}
+              >
+                Acknowledge
               </button>
             </div>
           </div>

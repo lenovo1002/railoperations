@@ -3,8 +3,8 @@ import DashboardCard from './DashboardCard';
 import './DashboardGrid.css';
 
 const API_BASE_URL = 'http://localhost:8080';
-const locationOptions = ['RHD', 'CVC', 'PIM', 'VNZ', 'RAM'];
-const tripLocationOptions = ['CVC_UP', 'CVC_DN', 'SJO_UP', 'KHK_DN', 'PIM_UP', 'SGT_UP', 'VNZ_UP'];
+const locationOptions = ['RHD', 'CVC', 'PIM', 'HVPCD', 'RAM'];
+const tripLocationOptions = ['CVC_UP', 'CVC_DN', 'SJO_UP', 'KHK_DN', 'PIM_UP', 'SGT_DN', 'VNZ_UP' ,'SGT_UP'];
 
 const initialTrip = {
   trainNo: '',
@@ -211,7 +211,7 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
               <div className="duty-form-grid">
                 <label className="modal-field duty-field">
                   <span>Duty No</span>
-                  <input name="dutyNo" value={formData.dutyNo} onChange={handleFieldChange} placeholder="e.g. 101" />
+                  <input name="dutyNo" value={formData.dutyNo} onChange={handleFieldChange} placeholder="e.101" />
                 </label>
                 <label className="modal-field duty-field">
                   <span>Line</span>

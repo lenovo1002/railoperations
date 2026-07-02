@@ -1,5 +1,7 @@
 package mahametro.tripchart.service;
 
+import java.util.Comparator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,12 +30,16 @@ public class TripChartService {
 		
 	}
 	
-	public ResponseEntity<?> getTripDetails(Integer dutyNo){
-		if (!tripRepo.existsById(dutyNo)) return ResponseEntity.notFound().header("MSG", "Duty number not found ! ").build() ;
-		TripDetails tripInfo = tripRepo.getById(dutyNo);
-		System.out.println(tripInfo.toString());
-		
-		return ResponseEntity.ok(tripInfo);
+	public ResponseEntity<TripDetails> getTripDetails(Integer dutyNo){
+		if (!tripRepo.existsById(dutyNo)) return ResponseEntity.notFound().header("Error ! ", "Duty number not found ! ").build() ;
+		return tripRepo.findById(dutyNo)
+		        .map(trip -> {
+		            trip.getTripTime().sort(
+		                Comparator.comparing(TripTime::getTripStartTime)
+		            );
+		            return ResponseEntity.ok().body(trip);
+		        })
+		        .orElseThrow(() -> new RuntimeException("Duty not found"));
 	}
 
 }

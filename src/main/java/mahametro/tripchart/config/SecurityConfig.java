@@ -105,10 +105,29 @@ public class SecurityConfig {
 		            
 
 		            .authorizeHttpRequests(auth -> auth
-		                    .requestMatchers("/admin/new", "/admin/authenticate" , "/admin/welcome" , "/tripchart/test" , "/tripchart/*").permitAll()
-		                    .requestMatchers("/tripchart/addtrip").authenticated()
-		                    .anyRequest().authenticated()
-		            )
+		            	    .requestMatchers(
+		            	            "/",
+		            	            "/index.html",
+		            	            "/favicon.ico",
+		            	            "/manifest.json",
+		            	            "/asset-manifest.json",
+		            	            "/robots.txt",
+		            	            "/logo192.png",
+		            	            "/logo512.png",
+		            	            "/static/**"
+		            	    ).permitAll()
+
+		            	    .requestMatchers(
+		            	            "/admin/new",
+		            	            "/admin/authenticate",
+		            	            "/admin/welcome",
+		            	            "/tripchart/test"
+		            	    ).permitAll()
+
+		            	    .requestMatchers("/tripchart/**").authenticated()
+
+		            	    .anyRequest().authenticated()
+		            	)
 
 		            .sessionManagement(session ->
 		                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

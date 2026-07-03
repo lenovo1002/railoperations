@@ -43,7 +43,7 @@ public class TripChartService {
 		        	if (dutyNo == 139) {
 		        	
 		            trip.getTripTime().sort(
-		                Comparator.comparing(TripTime::getTrainId)
+		                Comparator.comparing(TripTime::getTripStartsFrom)
 		            );
 		            return ResponseEntity.ok().body(trip); }
 		        	

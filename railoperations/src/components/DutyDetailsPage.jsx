@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './DashboardGrid.css';
 import './DutyDetailsPage.css';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = '';
 
 
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DashboardCard from './DashboardCard';
 import './DashboardGrid.css';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = '';
 const locationOptions = ['RHD', 'CVC', 'PIM', 'HVPCD', 'RAM'];
 const tripLocationOptions = ['CVC_UP', 'CVC_DN', 'SJO_UP', 'KHK_DN', 'PIM_UP', 'SGT_DN', 'VNZ_UP' ,'SGT_UP'];
 

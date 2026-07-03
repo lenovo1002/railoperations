@@ -32,14 +32,40 @@ public class TripChartService {
 	
 	public ResponseEntity<TripDetails> getTripDetails(Integer dutyNo){
 		if (!tripRepo.existsById(dutyNo)) return ResponseEntity.notFound().header("Error ! ", "Duty number not found ! ").build() ;
+		
+		
+		
+		
+
 		return tripRepo.findById(dutyNo)
 		        .map(trip -> {
+		        	
+		        	if (dutyNo == 139) {
+		        	
 		            trip.getTripTime().sort(
-		                Comparator.comparing(TripTime::getTripStartTime)
+		                Comparator.comparing(TripTime::getTrainId)
 		            );
-		            return ResponseEntity.ok().body(trip);
+		            return ResponseEntity.ok().body(trip); }
+		        	
+		        	else {trip.getTripTime().sort(
+			                Comparator.comparing(TripTime::getTripStartTime)
+				            );
+				            return ResponseEntity.ok().body(trip); }
 		        })
 		        .orElseThrow(() -> new RuntimeException("Duty not found"));
+		
+		
+		
+		
+		
+//		return tripRepo.findById(dutyNo)
+//		        .map(trip -> {
+//		            trip.getTripTime().sort(
+//		                Comparator.comparing(TripTime::getTripStartTime)
+//		            );
+//		            return ResponseEntity.ok().body(trip);
+//		        })
+//		        .orElseThrow(() -> new RuntimeException("Duty not found"));
 	}
 
 }

@@ -120,10 +120,10 @@
 .trip-table-header,
 .trip-table-row {
   display: grid;
-  grid-template-columns: 1fr 1.6fr 1.2fr 1.5fr 1.5fr 1fr 1fr 0.8fr;
+  grid-template-columns: 1fr 1.6fr 1.2fr 1.5fr 1.5fr 1fr 1fr;
   align-items: center;
   padding: 14px 20px;
-  min-width: 900px;
+  min-width: 820px;
 }
 
 .trip-table-header {
@@ -137,6 +137,7 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  color: #ffffff !important;
 }
 
 .trip-table-row {
@@ -155,6 +156,15 @@
 
 .trip-table-row.upcoming-trip:hover {
   background: rgba(16, 185, 129, 0.07);
+}
+
+.trip-table-row.ongoing-trip {
+  background: rgba(226, 126, 44, 0.05);
+  border-left: 4px solid rgb(226, 126, 44);
+}
+
+.trip-table-row.ongoing-trip:hover {
+  background: rgba(226, 126, 44, 0.08);
 }
 
 .trip-table-row.past-trip {
@@ -181,20 +191,19 @@
   box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
 }
 
-.alarm-btn-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.25rem;
-  padding: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.alarm-btn-icon:hover {
-  transform: scale(1.25) rotate(-10deg);
+.trip-tag.ongoing-tag {
+  background: rgb(226, 126, 44);
+  color: #ffffff;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  margin-left: 8px;
+  display: inline-block;
+  vertical-align: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  box-shadow: 0 2px 6px rgba(226, 126, 44, 0.2);
 }
 
 .trip-table-row span {

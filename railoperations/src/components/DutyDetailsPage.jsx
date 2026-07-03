@@ -18,7 +18,6 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
   const [clockValue, setClockValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [fallbackModal, setFallbackModal] = useState({ isOpen: false, timeStr: '', alarmTime: '' });
 
   useEffect(() => {
     const formatClock = () => {
@@ -36,90 +35,39 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
     return () => clearInterval(interval);
   }, []);
 
-  const getAlarmTime = (timeStr) => {
-    if (!timeStr) return { hour: 0, minute: 0 };
-    const parts = timeStr.split(':');
-    let hour = parseInt(parts[0], 10) || 0;
-    let minute = parseInt(parts[1], 10) || 0;
 
-    minute -= 15;
-    if (minute < 0) {
-      minute += 60;
-      hour -= 1;
-      if (hour < 0) {
-        hour += 24;
-      }
-    }
-    return { hour, minute };
-  };
 
-  const downloadIcsReminder = (timeStr, hour, minute) => {
-    const now = new Date();
-    const eventDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute);
-    
-    const pad = (n) => String(n).padStart(2, '0');
-    const startStr = `${eventDate.getFullYear()}${pad(eventDate.getMonth() + 1)}${pad(eventDate.getDate())}T${pad(hour)}${pad(minute)}00`;
-    
-    const endParts = timeStr.split(':');
-    const endH = parseInt(endParts[0], 10) || 0;
-    const endM = parseInt(endParts[1], 10) || 0;
-    const endStr = `${eventDate.getFullYear()}${pad(eventDate.getMonth() + 1)}${pad(eventDate.getDate())}T${pad(endH)}${pad(endM)}00`;
+  const getTripStatus = (startTimeStr, endTimeStr) => {
+    if (!startTimeStr || !endTimeStr) return 'past';
+    const startParts = startTimeStr.split(':');
+    const endParts = endTimeStr.split(':');
+    if (startParts.length < 2 || endParts.length < 2) return 'past';
 
-    const icsContent = [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//MetroDuty//Reminder//EN',
-      'BEGIN:VEVENT',
-      `UID:${Date.now()}@metroduty`,
-      `DTSTAMP:${startStr}Z`,
-      `DTSTART:${startStr}`,
-      `DTEND:${endStr}`,
-      `SUMMARY:MetroDuty Trip starts in 15 mins`,
-      `DESCRIPTION:Your MetroDuty train trip is scheduled to start at ${timeStr}.`,
-      'BEGIN:VALARM',
-      'TRIGGER:-PT0M',
-      'ACTION:DISPLAY',
-      'DESCRIPTION:MetroDuty Trip Reminder',
-      'END:VALARM',
-      'END:VEVENT',
-      'END:VCALENDAR'
-    ].join('\r\n');
-
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = window.URL.createObjectURL(blob);
-    link.setAttribute('download', `trip_reminder_${timeStr.replace(':', '_')}.ics`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    onNotify?.('Calendar file downloaded! Import it into your Calendar app.', 'success');
-  };
-
-  const getAlarmTimeInfo = (timeStr) => {
-    const { hour, minute } = getAlarmTime(timeStr);
-    const pad = (n) => String(n).padStart(2, '0');
-    const formattedAlarmTime = `${pad(hour)}:${pad(minute)}`;
-    const message = encodeURIComponent(`MetroDuty Trip starting at ${timeStr}`);
-    const intentUri = `intent://#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.HOUR=${hour};i.android.intent.extra.MINUTES=${minute};S.android.intent.extra.MESSAGE=${message};B.android.intent.extra.SKIP_UI=false;end`;
-    return { formattedAlarmTime, intentUri, hour, minute };
-  };
-
-  const getTripStatus = (timeStr) => {
-    if (!timeStr) return 'past';
-    const parts = timeStr.split(':');
-    if (parts.length < 2) return 'past';
-    const tripHours = parseInt(parts[0], 10) || 0;
-    const tripMinutes = parseInt(parts[1], 10) || 0;
+    const startHours = parseInt(startParts[0], 10) || 0;
+    const startMinutes = parseInt(startParts[1], 10) || 0;
+    const endHours = parseInt(endParts[0], 10) || 0;
+    const endMinutes = parseInt(endParts[1], 10) || 0;
 
     const now = new Date();
     const currentHours = now.getHours();
     const currentMinutes = now.getMinutes();
 
-    const tripTotal = tripHours * 60 + tripMinutes;
+    const startTotal = startHours * 60 + startMinutes;
+    let endTotal = endHours * 60 + endMinutes;
+    if (endTotal < startTotal) {
+      // Handle overnight shift wraps around midnight
+      endTotal += 24 * 60;
+    }
+    
     const currentTotal = currentHours * 60 + currentMinutes;
 
-    return tripTotal > currentTotal ? 'upcoming' : 'past';
+    if (currentTotal >= startTotal && currentTotal <= endTotal) {
+      return 'ongoing';
+    } else if (currentTotal < startTotal) {
+      return 'upcoming';
+    } else {
+      return 'past';
+    }
   };
 
   const summaryCards = useMemo(() => {
@@ -258,46 +206,24 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
                   <span>Trip End Location</span>
                   <span>Line</span>
                   <span>Break Time</span>
-                  <span>Status / Alarm</span>
                 </div>
                 {dutyData.trips.map((trip, index) => {
-                  const status = getTripStatus(trip.tripFrom);
+                  const status = getTripStatus(trip.tripFrom, trip.tripTo);
                   const isUpcoming = status === 'upcoming';
-                  const { intentUri, formattedAlarmTime } = getAlarmTimeInfo(trip.tripFrom);
+                  const isOngoing = status === 'ongoing';
                   return (
-                    <div className={`trip-table-row ${isUpcoming ? 'upcoming-trip' : 'past-trip'}`} key={`${trip.trainNo}-${index}`}>
+                    <div className={`trip-table-row ${isUpcoming ? 'upcoming-trip' : isOngoing ? 'ongoing-trip' : 'past-trip'}`} key={`${trip.trainNo}-${index}`}>
                       <span>{trip.trainNo}</span>
                       <span>
                         {trip.tripFrom}
                         {isUpcoming && <span className="trip-tag upcoming-tag">Upcoming</span>}
+                        {isOngoing && <span className="trip-tag ongoing-tag">Ongoing</span>}
                       </span>
                       <span>{trip.tripTo}</span>
                       <span>{trip.tripStartLocation}</span>
                       <span>{trip.tripEndLocation}</span>
                       <span>{trip.line}</span>
                       <span>{trip.breakTime}</span>
-                      <span>
-                        {isUpcoming ? (
-                          <a
-                            href={intentUri}
-                            className="alarm-btn-icon"
-                            title={`Set alarm for ${formattedAlarmTime} (15 mins before trip)`}
-                            onClick={(e) => {
-                              const isAndroid = /Android/i.test(navigator.userAgent);
-                              if (!isAndroid) {
-                                e.preventDefault();
-                                setFallbackModal({ isOpen: true, timeStr: trip.tripFrom, alarmTime: formattedAlarmTime });
-                              } else {
-                                onNotify?.(`Opening system Clock app for ${formattedAlarmTime}...`, 'success');
-                              }
-                            }}
-                          >
-                            ⏰
-                          </a>
-                        ) : (
-                          <span style={{ fontSize: '1.1rem', opacity: 0.5, paddingLeft: '6px' }} title="Trip completed">✔️</span>
-                        )}
-                      </span>
                     </div>
                   );
                 })}
@@ -306,51 +232,6 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
           )}
         </main>
       </div>
-
-      {fallbackModal.isOpen && (
-        <div className="modal-overlay" role="presentation" onClick={() => setFallbackModal({ isOpen: false, timeStr: '', alarmTime: '' })}>
-          <div className="modal-backdrop" aria-hidden="true" />
-          <div className="admin-modal" role="dialog" aria-modal="true" aria-labelledby="fallback-modal-title" onClick={(event) => event.stopPropagation()} style={{ maxWidth: '500px' }}>
-            <h2 id="fallback-modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgb(0, 36, 80)' }}>
-              <span>⏰</span> Set Alarm Reminder
-            </h2>
-            <div style={{ color: '#475569', fontSize: '0.95rem', lineHeight: '1.6', margin: '16px 0 20px' }}>
-              <p style={{ marginBottom: '12px' }}>
-                Direct alarm clock integration is supported on Android devices.
-              </p>
-              <p style={{ fontWeight: '600', color: '#1e293b', marginBottom: '16px' }}>
-                For iOS (Safari/Brave), macOS, or Windows devices, please choose an option:
-              </p>
-              <ol style={{ paddingLeft: '20px', margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <li>Manually set an alarm in your phone's Clock app for <strong>{fallbackModal.alarmTime}</strong>.</li>
-                <li>Download a Calendar reminder file (.ics) that automatically triggers an alert on your device.</li>
-              </ol>
-            </div>
-            <div className="modal-actions" style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', marginTop: '24px' }}>
-              <button
-                type="button"
-                className="modal-button primary"
-                onClick={() => {
-                  const { hour, minute } = getAlarmTime(fallbackModal.timeStr);
-                  downloadIcsReminder(fallbackModal.timeStr, hour, minute);
-                  setFallbackModal({ isOpen: false, timeStr: '', alarmTime: '' });
-                }}
-                style={{ width: '100%', height: '42px', borderRadius: '10px', backgroundColor: 'rgb(226, 126, 44)' }}
-              >
-                📅 Download Calendar Reminder (.ics)
-              </button>
-              <button
-                type="button"
-                className="modal-button secondary"
-                onClick={() => setFallbackModal({ isOpen: false, timeStr: '', alarmTime: '' })}
-                style={{ width: '100%', height: '42px', borderRadius: '10px' }}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

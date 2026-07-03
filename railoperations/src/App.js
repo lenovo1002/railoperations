@@ -34,11 +34,11 @@ function App() {
   }, [adminToken, tokenExpiresAt]);
 
 
-  useEffect(() => {
-    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-      setNotifications((prev) => [...prev, { id: Date.now(), message: 'For the best experience, please enable \'Desktop Site\' in your browser.', type: 'info' }]);
-    }
-  },[]) ;
+  // useEffect(() => {
+  //   if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+  //     setNotifications((prev) => [...prev, { id: Date.now(), message: 'For the best experience, please enable \'Desktop Site\' in your browser.', type: 'info' }]);
+  //   }
+  // },[]) ;
 
 
   useEffect(() => {
@@ -268,11 +268,14 @@ function App() {
 
       <div className="app-content">
         <main className="dashboard-page">
+          <div classname = "dashboard-wrapper">
           <DashboardGrid onSelectCard={(title) => {
             if (title === 'Get Duty Details') {
               setActivePage('duty-details');
             }
           }} />
+
+          </div>
         </main>
 
         <footer className="app-footer">

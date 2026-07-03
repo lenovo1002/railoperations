@@ -1,0 +1,49 @@
+﻿- package-lock.json.Name
+- package.json.Name
+- project.txt.Name
+- README.md.Name
+- .gitignore.Name
++ build.Name\
+  - logo192.png.Name
+  - logo512.png.Name
+  - manifest.json.Name
+  - robots.txt.Name
+  - index.html.Name
+  - asset-manifest.json.Name
+  - favicon.ico.Name
+  + static.Name\
+    + media.Name\
+      - IMG_20260627_134639c.4afa29eb1ea5d66fa5f8.png.Name
+    + js.Name\
+      - main.c4f0d6e7.js.LICENSE.txt.Name
+      - main.c4f0d6e7.js.map.Name
+      - main.c4f0d6e7.js.Name
+      - 453.d3a68147.chunk.js.Name
+      - 453.d3a68147.chunk.js.map.Name
+    + css.Name\
+      - main.0f2b9c3e.css.map.Name
+      - main.0f2b9c3e.css.Name
++ src.Name\
+  - index.js.Name
+  - setupTests.js.Name
+  - reportWebVitals.js.Name
+  - logo.svg.Name
+  - App.css.Name
+  - index.css.Name
+  - App.test.js.Name
+  - App.js.Name
+  + components.Name\
+    - DashboardGrid.jsx.Name
+    - DutyDetailsPage.css.Name
+    - DutyDetailsPage.jsx.Name
+    - DashboardGrid.css.Name
+    - AdminPage.jsx.Name
+    - DashboardCard.css.Name
+    - DashboardCard.jsx.Name
++ public.Name\
+  - logo512.png.Name
+  - manifest.json.Name
+  - robots.txt.Name
+  - favicon.ico.Name
+  - index.html.Name
+  - logo192.png.Name

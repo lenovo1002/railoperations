@@ -26,7 +26,7 @@ test('authenticates the admin and stores the returned token', async () => {
   fireEvent.click(screen.getByRole('button', { name: /^login$/i }));
 
   expect(mockFetch).toHaveBeenCalledWith(
-    'http://localhost:8080/admin/authenticate',
+    '/admin/authenticate',
     expect.objectContaining({
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,7 +77,7 @@ test('submits the duty form payload to the backend when the form is submitted', 
   fireEvent.submit(screen.getByRole('button', { name: /submit/i }).closest('form'));
 
   expect(mockFetch).toHaveBeenCalledWith(
-    'http://localhost:8080/tripchart/addtrip',
+    '/tripchart/addtrip',
     expect.objectContaining({
       method: 'POST',
       headers: expect.objectContaining({

@@ -367,7 +367,7 @@ function App() {
           <div className="admin-modal consent-modal" role="dialog" aria-modal="true" aria-labelledby="consent-modal-title" onClick={(event) => event.stopPropagation()}>
             <h2 id="consent-modal-title">Important Notice</h2>
             <p className="consent-notice">
-              Trip timing data is currently under development and may contain inaccuracies. Please verify all timings against the official physical trip chart before making operational decisions. If you identify any errors, please submit a complaint so the information can be corrected.
+              Trip timing data is currently under development and may contain inaccuracies. Please verify all timings against the official physical trip chart before making operational decisions. If you identify any errors, please raise a issue on the same portal so the information can be corrected.
             </p>
             <label className="consent-checkbox-group">
               <input

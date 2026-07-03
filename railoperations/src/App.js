@@ -35,6 +35,13 @@ function App() {
 
 
   useEffect(() => {
+    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      setNotifications((prev) => [...prev, { id: Date.now(), message: 'For the best experience, please enable \'Desktop Site\' in your browser.', type: 'info' }]);
+    }
+  },[]) ;
+
+
+  useEffect(() => {
     const formatClock = () => {
       const now = new Date();
       const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };

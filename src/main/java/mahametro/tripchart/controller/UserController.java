@@ -46,6 +46,9 @@ public class UserController {
 	
 	@PostMapping(value="/authenticate")
 	public AuthResponse authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
+		
+		System.out.println("Login request received ! ");
+		
 		Authentication authObj=authManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(),
 				authRequest.getPassword()));
 		

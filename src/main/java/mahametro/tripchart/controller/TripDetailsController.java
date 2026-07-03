@@ -17,7 +17,7 @@ import mahametro.tripchart.entity.TripDetails;
 import mahametro.tripchart.service.TripChartService;
 @RestController
 @RequestMapping("tripchart")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin("https://metroduty.in")
 public class TripDetailsController {
 	
 	@Autowired
@@ -37,11 +37,6 @@ public class TripDetailsController {
 		
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-		System.out.println("Authentication = " + auth);
-		System.out.println("Principal = " + auth.getPrincipal());
-		System.out.println("Authorities = " + auth.getAuthorities());
-		System.out.println("Authenticated = " + auth.isAuthenticated());
 		return tripService.addTrip(tripDetails);
 	}
 	

@@ -84,25 +84,28 @@ public class SecurityConfig {
 	
 	
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-		
-		return http.authorizeHttpRequests(auth -> auth
-			    .requestMatchers(
-			        "/",
-			        "/index.html",
-			        "/static/**",
-			        "/favicon.ico",
-			        "/manifest.json",
-			        "/asset-manifest.json",
-			        "/robots.txt",
-			        "/tripchart/{dutyNo}",
-			        "/tripchart/test",
-			        "/admin/authenticate"
-			    ).permitAll()
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-			    .requestMatchers("/tripchart/addtrip").authenticated()
+	    return http
+	            .cors(Customizer.withDefaults())
+	            .csrf(csrf -> csrf.disable())
 
-			    .anyRequest().authenticated()
-			).build();
-	}
-}
+	            .authorizeHttpRequests(auth -> auth
+
+	                    // Only protected endpoint
+	                    .requestMatchers("/tripchart/addtrip").authenticated()
+
+	                    // Everything else is public
+	                    .anyRequest().permitAll()
+	            )
+
+	            .sessionManagement(session ->
+	                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	            )
+
+	            .authenticationProvider(authProvider())
+
+	            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+
+	            .build();
+	}}

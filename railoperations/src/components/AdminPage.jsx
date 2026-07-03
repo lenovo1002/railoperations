@@ -162,19 +162,35 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
   };
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={{ '--bg-image': 'url("/images/metro-bg.png")' }}>
       <div className="top-bar">
-        <div className="top-bar-left">{clockValue}</div>
-        <div className="top-bar-ticker" aria-hidden="true">
-          <div className="ticker-text">
-            <span className="ticker-item">Welcome to the admin panel. Use this area to manage rail operations tools.</span>
+        <div className="top-bar-left-sec" onClick={onHome} style={{ cursor: 'pointer' }}>
+          <div className="top-bar-brand">
+            <span className="brand-logo">🚇</span>
+            <span className="brand-name">MetroDuty</span>
+            <span className="brand-badge admin-badge">Admin</span>
+          </div>
+          <div className="top-bar-clock">
+            <span className="clock-pulse"></span>
+            <span className="clock-text">{clockValue}</span>
           </div>
         </div>
+
         <div className="top-bar-right">
           <button className="nav-button admin-button" type="button" onClick={onHome}>
             <span className="admin-icon">🏠</span>
             <span className="admin-label">Home</span>
           </button>
+          <button className="nav-button logout-button" type="button" onClick={onLogout}>
+            <span className="admin-icon">🚪</span>
+            <span className="admin-label">Logout</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="top-bar-ticker static-ticker" aria-hidden="true">
+        <div className="ticker-text">
+          <span className="ticker-item">🛠️ Welcome to the admin panel. Use this area to manage rail operations tools.</span>
         </div>
       </div>
 

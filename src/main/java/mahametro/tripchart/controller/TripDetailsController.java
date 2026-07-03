@@ -31,7 +31,6 @@ public class TripDetailsController {
 	}
 	
 	@PostMapping("/addtrip")
-	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> addTrip (@RequestBody TripDetails tripDetails) {
 		
 		

@@ -86,69 +86,23 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		
-		    return http
-		            .csrf(csrf -> csrf.disable())
-		            .authorizeHttpRequests(auth -> auth
-		                    .anyRequest().permitAll()
-		            )
-		            .build();
-		
-		
-		
-		
-		
-		
-//		return http.csrf().disable()
-//				.authorizeHttpRequests()
-//				// Need to Permit for New Registration and Login
-//				.requestMatchers("/users/new","/users/authenticate").permitAll().and()
-//				.authorizeHttpRequests().requestMatchers("/products/**")
-//				.authenticated().and()
-//				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//				.and().authenticationProvider(authProvider())
-//				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-//				.build();
-		
-		
+		.authorizeHttpRequests(auth -> auth
+			    .requestMatchers(
+			        "/",
+			        "/index.html",
+			        "/static/**",
+			        "/favicon.ico",
+			        "/manifest.json",
+			        "/asset-manifest.json",
+			        "/robots.txt",
+			        "/tripchart/{dutyNo}",
+			        "/tripchart/test",
+			        "/admin/authenticate"
+			    ).permitAll()
 
-//		    return http
-//		    		.cors(Customizer.withDefaults())
-//		            .csrf(csrf -> csrf.disable())
-//		            
-//
-//		            .authorizeHttpRequests(auth -> auth
-//		            	    .requestMatchers(
-//		            	            "/",
-//		            	            "/index.html",
-//		            	            "/favicon.ico",
-//		            	            "/manifest.json",
-//		            	            "/asset-manifest.json",
-//		            	            "/robots.txt",
-//		            	            "/logo192.png",
-//		            	            "/logo512.png",
-//		            	            "/static/**"
-//		            	    ).permitAll()
-//
-//		            	    .requestMatchers(
-//		            	            "/admin/new",
-//		            	            "/admin/authenticate",
-//		            	            "/admin/welcome",
-//		            	            "/tripchart/test"
-//		            	    ).permitAll()
-//
-//		            	    .requestMatchers("/tripchart/**").authenticated()
-//
-//		            	    .anyRequest().authenticated()
-//		            	)
-//
-//		            .sessionManagement(session ->
-//		                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//		            )
-//
-//		            .authenticationProvider(authProvider())
-//		            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-//
-//		            .build();
-				
+			    .requestMatchers("/tripchart/addtrip").authenticated()
+
+			    .anyRequest().authenticated()
+			)
 	}
 }

@@ -37,7 +37,6 @@ public class JWTAuthFilter extends OncePerRequestFilter{
 		// VAlue ==> Bearer + "  " + Token
 		
 		String authHeader=request.getHeader("Authorization"); 
-		System.out.println("Authorization Header = " + authHeader);
 		String token=null;
 		String userName=null;
 		
@@ -56,9 +55,6 @@ public class JWTAuthFilter extends OncePerRequestFilter{
 				//Need to attach our toekn to the session
 				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				SecurityContextHolder.getContext().setAuthentication(authToken);
-				System.out.println("Username from JWT = " + userName);
-				System.out.println("UserDetails = " + userDetails.getUsername());
-				System.out.println("Token Valid = " + jwtService.validateToken(token, userDetails));
 				
 				
 			}

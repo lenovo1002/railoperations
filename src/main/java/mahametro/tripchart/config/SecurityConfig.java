@@ -86,7 +86,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		
-		.authorizeHttpRequests(auth -> auth
+		return http.authorizeHttpRequests(auth -> auth
 			    .requestMatchers(
 			        "/",
 			        "/index.html",
@@ -103,6 +103,6 @@ public class SecurityConfig {
 			    .requestMatchers("/tripchart/addtrip").authenticated()
 
 			    .anyRequest().authenticated()
-			)
+			).build();
 	}
 }

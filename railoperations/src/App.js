@@ -87,7 +87,7 @@ function App() {
   // Ticker animation: start beside the right controls (bell/admin)
   const tickerRef = useRef(null);
   const tickerTextRef = useRef(null);
-  
+
 
   useEffect(() => {
     let pos = 0;
@@ -167,7 +167,7 @@ function App() {
       setNotifications((prev) => prev.filter((item) => item.id !== id));
     }, 3000);
   };
-  
+
 
   const handleAdminLogin = async () => {
     const trimmedLoginId = loginId.trim();
@@ -217,14 +217,14 @@ function App() {
     setPassword('');
   };
 
-   const handleAdminClick = () => {
-  if (adminToken && tokenExpiresAt > Date.now()) {
-    setIsAdminLoggedIn(true);
-    setActivePage("admin");
-  } else {
-    setShowAdminModal(true);
-  }
-};
+  const handleAdminClick = () => {
+    if (adminToken && tokenExpiresAt > Date.now()) {
+      setIsAdminLoggedIn(true);
+      setActivePage("admin");
+    } else {
+      setShowAdminModal(true);
+    }
+  };
 
   const handleLogout = () => {
     setIsAdminLoggedIn(false);
@@ -233,20 +233,20 @@ function App() {
 
     localStorage.removeItem("adminToken");
     localStorage.removeItem("adminTokenExpiresAt");
-};
+  };
 
   if (isAdminLoggedIn) {
     return (
       <>
         <AdminPage
-   onHome={() => {
-    setIsAdminLoggedIn(false);
-    setActivePage("home");
-}}
-    onLogout={handleLogout}
-    adminToken={adminToken}
-    onNotify={notify}
-/>
+          onHome={() => {
+            setIsAdminLoggedIn(false);
+            setActivePage("home");
+          }}
+          onLogout={handleLogout}
+          adminToken={adminToken}
+          onNotify={notify}
+        />
         <div className="toast-stack" aria-live="polite" aria-atomic="true">
           {notifications.map((item) => (
             <div key={item.id} className={`toast-item toast-${item.type}`}>
@@ -274,9 +274,9 @@ function App() {
   }
 
   return (
-    
+
     <div className="app-shell" style={{ '--bg-image': 'url("/images/metro-bg.png")' }}>
-      
+
       <div className="top-bar">
         <div className="top-bar-left-sec">
           <div className="top-bar-brand">
@@ -296,7 +296,7 @@ function App() {
           <button
             className="nav-button admin-button"
             aria-label="Admin Login"
-            onClick={() => {handleAdminClick();}}
+            onClick={() => { handleAdminClick(); }}
           >
             <span className="admin-icon">👤</span>
             <span className="admin-label">Admin Login</span>
@@ -415,9 +415,9 @@ function App() {
             <p className="dev-modal-desc" style={{ color: '#475569', fontSize: '0.95rem', lineHeight: '1.6', margin: '12px 0 20px' }}>
               The <strong>{developmentModal.featureName}</strong> feature is currently under development. Please contact the developer for deployment timelines.
             </p>
-             <div className="dev-modal-actions" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
+            <div className="dev-modal-actions" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
               <a
-                href={`https://wa.me/917798254480?text=Hi!%20I%20am%20inquiring%20about%20the%20timeline%20for%20the%20%22${encodeURIComponent(developmentModal.featureName)}%22%20feature%20on%20MetroDuty.`}
+                href={`https://wa.me/918010157214?text=Hi!%20I%20am%20inquiring%20about%20the%20timeline%20for%20the%20%22${encodeURIComponent(developmentModal.featureName)}%22%20feature%20on%20MetroDuty.`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="whatsapp-btn"
@@ -444,7 +444,7 @@ function App() {
             <h2 id="disclaimer-modal-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#dc2626' }}>
               <span>⚠️</span> Important Operational Notice
             </h2>
-            
+
             <div className="disclaimer-content" style={{ color: '#334155', fontSize: '0.92rem', lineHeight: '1.6', margin: '16px 0 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <p>
                 Welcome to <strong>MetroDuty Portal</strong>. Please note that this is a newly built website and the operational data entered into the system may contain inaccuracies due to human entry errors.

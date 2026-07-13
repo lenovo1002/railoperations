@@ -43,7 +43,6 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
 
   // States for Document Upload
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [selectedDocType, setSelectedDocType] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -71,7 +70,6 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
       setShowDutyModal(true);
     } else if (title === 'Upload Documents') {
       setUploadError('');
-      setSelectedDocType('');
       setSelectedFile(null);
       setShowUploadModal(true);
     }
@@ -79,10 +77,6 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
 
   const handleUploadSubmit = async (event) => {
     event.preventDefault();
-    if (!selectedDocType) {
-      setUploadError('Please select a document type.');
-      return;
-    }
     if (!selectedFile) {
       setUploadError('Please select a PDF file.');
       return;
@@ -95,7 +89,6 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
     try {
       const formDataObj = new FormData();
       formDataObj.append('file', selectedFile);
-      formDataObj.append('id', selectedDocType);
 
       const headers = {};
       if (adminToken) {
@@ -116,7 +109,6 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
       onNotify?.('Document uploaded successfully.', 'success');
       setShowUploadModal(false);
       setSelectedFile(null);
-      setSelectedDocType('');
     } catch (error) {
       const message = error.message || 'Unable to upload document to the server.';
       setUploadError(message);
@@ -427,24 +419,11 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
           <div className="modal-backdrop" aria-hidden="true" />
           <div className="admin-modal upload-form-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title" onClick={(event) => event.stopPropagation()}>
             <div className="modal-header">
-              <h2 id="upload-modal-title">Upload Documents</h2>
-              <p>Select the document type and select a PDF file to upload.</p>
+              <h2 id="upload-modal-title">Upload Document</h2>
+              <p>Select a PDF file to upload.</p>
             </div>
 
             <form className="duty-form" onSubmit={handleUploadSubmit}>
-              <label className="modal-field duty-field">
-                <span>Document Type</span>
-                <select
-                  value={selectedDocType}
-                  onChange={(e) => setSelectedDocType(e.target.value)}
-                  required
-                >
-                  <option value="">Select document type</option>
-                  <option value="tripchart-line1">Tripchart Line 1 PDF</option>
-                  <option value="tripchart-line2">Tripchart Line 2 PDF</option>
-                  <option value="daily-roster">Daily Roster PDF</option>
-                </select>
-              </label>
 
               <div className="modal-field duty-field">
                 <span>PDF Document</span>

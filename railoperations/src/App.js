@@ -20,6 +20,8 @@ function App() {
   const [activePage, setActivePage] = useState('home');
   const [notifications, setNotifications] = useState([]);
   const [developmentModal, setDevelopmentModal] = useState({ isOpen: false, featureName: '' });
+  const [showLinksModal, setShowLinksModal] = useState(false);
+  const [activePdf, setActivePdf] = useState(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [disclaimerCountdown, setDisclaimerCountdown] = useState(10);
 
@@ -323,7 +325,9 @@ function App() {
             <DashboardGrid onSelectCard={(title) => {
               if (title === 'Get Duty Details') {
                 setActivePage('duty-details');
-              } else if (title === 'Compare Duties' || title === 'External Links' || title === 'Raise Issue') {
+              } else if (title === 'External Links') {
+                setShowLinksModal(true);
+              } else if (title === 'Compare Duties' || title === 'Raise Issue') {
                 setDevelopmentModal({ isOpen: true, featureName: title });
               }
             }} />
@@ -432,6 +436,174 @@ function App() {
               >
                 Close
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showLinksModal && (
+        <div className="modal-overlay" role="presentation" onClick={() => setShowLinksModal(false)}>
+          <div className="modal-backdrop" aria-hidden="true" />
+          <div className="admin-modal links-modal" role="dialog" aria-modal="true" aria-labelledby="links-modal-title" onClick={(event) => event.stopPropagation()}>
+            <div className="links-modal-header">
+              <h2 id="links-modal-title"><span>🔗</span> Quick Links & Resources</h2>
+              <p>Access rosters, swap requests, and official operational documents.</p>
+            </div>
+            
+            <div className="links-sections-grid">
+              <div className="links-column">
+                <h3><span>🌐</span> Useful Portals & Forms</h3>
+                <a
+                  href="https://docs.google.com/spreadsheets/d/111VMDS4AHi2XNOxmxxVobVFud6QIAGLFd8pj1msWQVo/edit?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-card-btn"
+                >
+                  <span className="link-icon">📅</span>
+                  <div className="link-details">
+                    <span className="link-title">Daily Roster</span>
+                  </div>
+                  <span className="link-arrow">↗</span>
+                </a>
+                
+                <a
+                  href="https://docs.google.com/spreadsheets/d/111VMDS4AHi2XNOxmxxVobVFud6QIAGLFd8pj1msWQVo/edit?gid=655976027#gid=655976027"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-card-btn"
+                >
+                  <span className="link-icon">📊</span>
+                  <div className="link-details">
+                    <span className="link-title">Roster Sheet</span>
+                  </div>
+                  <span className="link-arrow">↗</span>
+                </a>
+
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSfrFgJrjHc-jifGx-wWxtUsDZcIlXQfb6Nzyaa5GMBECxXeFw/viewform"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-card-btn"
+                >
+                  <span className="link-icon">🔄</span>
+                  <div className="link-details">
+                    <span className="link-title">Duty Exchange</span>
+                  </div>
+                  <span className="link-arrow">↗</span>
+                </a>
+
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLScb83A_qC2s3T6kdND-vRd5CRAtOW2eVOvCFwLOxf1Q3QItbA/viewform"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-card-btn"
+                >
+                  <span className="link-icon">📝</span>
+                  <div className="link-details">
+                    <span className="link-title">Duty Request</span>
+                  </div>
+                  <span className="link-arrow">↗</span>
+                </a>
+              </div>
+
+              <div className="links-column">
+                <h3><span>📄</span> Operational Documents</h3>
+                <button
+                  type="button"
+                  className="link-card-btn"
+                  onClick={() => {
+                    setShowLinksModal(false);
+                    setActivePdf({ id: 'tripchart-line1', title: 'Tripchart Line 1' });
+                  }}
+                >
+                  <span className="link-icon">🚇</span>
+                  <div className="link-details">
+                    <span className="link-title">Tripchart Line 1</span>
+                  </div>
+                  <span className="link-arrow">→</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="link-card-btn"
+                  onClick={() => {
+                    setShowLinksModal(false);
+                    setActivePdf({ id: 'tripchart-line2', title: 'Tripchart Line 2' });
+                  }}
+                >
+                  <span className="link-icon">🚇</span>
+                  <div className="link-details">
+                    <span className="link-title">Tripchart Line 2</span>
+                  </div>
+                  <span className="link-arrow">→</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="link-card-btn"
+                  onClick={() => {
+                    setShowLinksModal(false);
+                    setActivePdf({ id: 'daily-roster', title: 'Daily Roster' });
+                  }}
+                >
+                  <span className="link-icon">📅</span>
+                  <div className="link-details">
+                    <span className="link-title">Daily Roster PDF</span>
+                  </div>
+                  <span className="link-arrow">→</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="modal-button secondary"
+                onClick={() => setShowLinksModal(false)}
+                style={{ width: '100%', height: '42px', borderRadius: '10px' }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activePdf && (
+        <div className="pdf-viewer-overlay" role="presentation" onClick={() => setActivePdf(null)}>
+          <div className="modal-backdrop" aria-hidden="true" />
+          <div className="pdf-viewer-modal" role="dialog" aria-modal="true" aria-labelledby="pdf-viewer-title" onClick={(event) => event.stopPropagation()}>
+            <div className="pdf-viewer-header">
+              <h2 id="pdf-viewer-title"><span>📄</span> {activePdf.title}</h2>
+              <button
+                type="button"
+                className="pdf-close-btn"
+                aria-label="Close PDF Viewer"
+                onClick={() => {
+                  setActivePdf(null);
+                  setShowLinksModal(true);
+                }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div className="pdf-iframe-container">
+              <div className="pdf-iframe-loader">
+                <div className="pdf-spinner"></div>
+                <span>Loading PDF Document...</span>
+              </div>
+              <iframe
+                src={`${API_BASE_URL}/pdf/${activePdf.id}`}
+                className="pdf-iframe-element"
+                title={activePdf.title}
+                onLoad={(e) => {
+                  const loader = e.target.previousSibling;
+                  if (loader) {
+                    loader.style.display = 'none';
+                  }
+                }}
+              />
             </div>
           </div>
         </div>

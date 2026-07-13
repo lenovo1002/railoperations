@@ -282,7 +282,7 @@ body,
 
 .hero-banner {
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   margin: 20px auto 0;
   border-radius: 16px;
   overflow: hidden;
@@ -292,14 +292,18 @@ body,
 
 .hero-banner-image {
   width: 100%;
-  height: 300px;
+  height: 450px;
   object-fit: cover;
   display: block;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: auto;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .hero-banner:hover .hero-banner-image {
-  transform: scale(1.03);
+  transform: scale(1.02) translateZ(0);
 }
 
 @media (max-width: 768px) {
@@ -308,7 +312,7 @@ body,
     margin-top: 16px;
   }
   .hero-banner-image {
-    height: 160px;
+    height: 260px;
   }
 }
 
@@ -795,3 +799,290 @@ body,
 .whatsapp-btn:active {
   transform: translateY(0);
 }
+
+/* External Links Modal */
+.links-modal {
+  width: min(100%, 680px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 25px 60px rgba(0, 36, 80, 0.25);
+  position: relative;
+  z-index: 1;
+}
+
+.links-modal-header {
+  margin-bottom: 24px;
+}
+
+.links-modal-header h2 {
+  margin: 0 0 6px;
+  color: var(--primary-color);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.links-modal-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.links-sections-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 640px) {
+  .links-sections-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.links-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.links-column h3 {
+  font-size: 1.05rem;
+  color: var(--primary-color);
+  margin: 0 0 6px;
+  border-bottom: 2px solid rgb(226, 126, 44);
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.link-card-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 36, 80, 0.08);
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.link-card-btn:hover {
+  background: rgb(226, 126, 44);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(226, 126, 44, 0.25);
+  border-color: rgb(226, 126, 44);
+}
+
+.link-card-btn .link-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.link-card-btn .link-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.link-card-btn .link-title {
+  font-weight: 700;
+}
+
+.link-card-btn .link-arrow {
+  margin-left: auto;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+.link-card-btn:hover .link-arrow {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+/* PDF Viewer Modal Overlay */
+.pdf-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.pdf-viewer-modal {
+  position: relative;
+  z-index: 2001;
+  width: min(95vw, 1200px);
+  height: min(90vh, 850px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pdf-viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 36, 80, 0.1);
+  padding-bottom: 14px;
+}
+
+.pdf-viewer-header h2 {
+  margin: 0;
+  color: var(--primary-color);
+  font-weight: 800;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pdf-viewer-header h2 span {
+  color: rgb(226, 126, 44);
+}
+
+.pdf-close-btn {
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pdf-close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  transform: rotate(90deg);
+}
+
+.pdf-iframe-container {
+  flex: 1;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid rgba(0, 36, 80, 0.08);
+}
+
+.pdf-iframe-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-weight: 600;
+  gap: 12px;
+  z-index: 1;
+}
+
+.pdf-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(226, 126, 44, 0.1);
+  border-top-color: rgb(226, 126, 44);
+  border-radius: 50%;
+  animation: pdfSpin 1s infinite linear;
+}
+
+@keyframes pdfSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.pdf-iframe-element {
+  width: 100%;
+  height: 100%;
+  border: none;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+/* Document Upload Modal Specifics */
+.upload-form-modal {
+  width: min(100%, 480px);
+}
+
+.file-dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+
+.file-dropzone:hover {
+  border-color: rgb(226, 126, 44);
+  background: rgba(226, 126, 44, 0.02);
+  color: rgb(226, 126, 44);
+}
+
+.file-dropzone.has-file {
+  border-color: var(--accent-color);
+  background: rgba(34, 197, 94, 0.02);
+  color: #15803d;
+}
+
+.file-dropzone-icon {
+  font-size: 2rem;
+}
+
+.file-dropzone-text {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.file-dropzone-subtext {
+  font-size: 0.78rem;
+  opacity: 0.8;
+}
+
+.file-input-hidden {
+  display: none;
+}
+

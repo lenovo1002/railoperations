@@ -29,7 +29,7 @@ const initialFormState = {
 
 const adminCards = [
   { title: 'Add Duty', icon: '➕', colorClass: 'card-indigo' },
-  { title: 'Upload Daily Roster', icon: '⬆️', colorClass: 'card-teal' },
+  { title: 'Upload Documents', icon: '📁', colorClass: 'card-teal' },
   { title: 'View Issues', icon: '⚠️', colorClass: 'card-violet' },
   { title: 'Announcements', icon: '📢', colorClass: 'card-pink' },
 ];
@@ -40,6 +40,13 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
   const [formData, setFormData] = useState(initialFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  // States for Document Upload
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [selectedDocType, setSelectedDocType] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
 
   useEffect(() => {
     const formatClock = () => {
@@ -62,6 +69,60 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
       setSubmitError('');
       setFormData(initialFormState);
       setShowDutyModal(true);
+    } else if (title === 'Upload Documents') {
+      setUploadError('');
+      setSelectedDocType('');
+      setSelectedFile(null);
+      setShowUploadModal(true);
+    }
+  };
+
+  const handleUploadSubmit = async (event) => {
+    event.preventDefault();
+    if (!selectedDocType) {
+      setUploadError('Please select a document type.');
+      return;
+    }
+    if (!selectedFile) {
+      setUploadError('Please select a PDF file.');
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError('');
+    onNotify?.('Uploading document to the server...', 'info');
+
+    try {
+      const formDataObj = new FormData();
+      formDataObj.append('file', selectedFile);
+      formDataObj.append('id', selectedDocType);
+
+      const headers = {};
+      if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/pdf/upload`, {
+        method: 'POST',
+        headers,
+        body: formDataObj,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => 'Upload failed.');
+        throw new Error(errorText || 'Unable to upload document.');
+      }
+
+      onNotify?.('Document uploaded successfully.', 'success');
+      setShowUploadModal(false);
+      setSelectedFile(null);
+      setSelectedDocType('');
+    } catch (error) {
+      const message = error.message || 'Unable to upload document to the server.';
+      setUploadError(message);
+      onNotify?.(message, 'error');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -356,6 +417,78 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
               </div>
 
               {submitError && <p role="alert" className="form-feedback error">{submitError}</p>}
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showUploadModal && (
+        <div className="modal-overlay" role="presentation" onClick={() => setShowUploadModal(false)}>
+          <div className="modal-backdrop" aria-hidden="true" />
+          <div className="admin-modal upload-form-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title" onClick={(event) => event.stopPropagation()}>
+            <div className="modal-header">
+              <h2 id="upload-modal-title">Upload Documents</h2>
+              <p>Select the document type and select a PDF file to upload.</p>
+            </div>
+
+            <form className="duty-form" onSubmit={handleUploadSubmit}>
+              <label className="modal-field duty-field">
+                <span>Document Type</span>
+                <select
+                  value={selectedDocType}
+                  onChange={(e) => setSelectedDocType(e.target.value)}
+                  required
+                >
+                  <option value="">Select document type</option>
+                  <option value="tripchart-line1">Tripchart Line 1 PDF</option>
+                  <option value="tripchart-line2">Tripchart Line 2 PDF</option>
+                  <option value="daily-roster">Daily Roster PDF</option>
+                </select>
+              </label>
+
+              <div className="modal-field duty-field">
+                <span>PDF Document</span>
+                <div
+                  className={`file-dropzone ${selectedFile ? 'has-file' : ''}`}
+                  onClick={() => document.getElementById('pdf-file-input').click()}
+                >
+                  <span className="file-dropzone-icon">{selectedFile ? '✅' : '📄'}</span>
+                  <span className="file-dropzone-text">
+                    {selectedFile ? selectedFile.name : 'Click to select PDF file'}
+                  </span>
+                  <span className="file-dropzone-subtext">Only PDF files are allowed</span>
+                </div>
+                <input
+                  id="pdf-file-input"
+                  type="file"
+                  accept=".pdf"
+                  className="file-input-hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      setSelectedFile(e.target.files[0]);
+                    }
+                  }}
+                />
+              </div>
+
+              {uploadError && <p role="alert" className="form-feedback error">{uploadError}</p>}
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="modal-button secondary"
+                  onClick={() => setShowUploadModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="modal-button primary"
+                  disabled={isUploading}
+                >
+                  {isUploading ? 'Uploading...' : 'Upload'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

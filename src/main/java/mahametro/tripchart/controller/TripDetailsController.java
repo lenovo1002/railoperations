@@ -43,5 +43,9 @@ public class TripDetailsController {
 	public String test() {
 		return "Yahoo, Server is up !";
 	}
+	
+	
+	
+	
 
 }

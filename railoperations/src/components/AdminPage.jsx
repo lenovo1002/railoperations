@@ -3,8 +3,8 @@ import DashboardCard from './DashboardCard';
 import './DashboardGrid.css';
 
 const API_BASE_URL = '';
-const locationOptions = ['RHD', 'CVC', 'PIM', 'HVPCD', 'RAM'];
-const tripLocationOptions = ['CVC_UP', 'CVC_DN', 'SJO_UP', 'KHK_DN', 'PIM_UP', 'SGT_DN', 'VNZ_UP' ,'SGT_UP'];
+const locationOptions = ['RHD', 'CVC', 'PIM', 'HVPCD', 'RAW'];
+const tripLocationOptions = ['CVC_UP', 'CVC_DN', 'SJO_UP', 'KHK_DN', 'PIM_UP', 'SGT_DN', 'VNZ_UP', 'SGT_UP', 'PRS_DN', 'RAW_DN', 'GWC_UP', 'VNZ_DN'];
 
 const initialTrip = {
   trainNo: '',

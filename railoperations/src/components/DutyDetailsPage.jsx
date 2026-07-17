@@ -199,7 +199,7 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
 
               <section className="trip-table-card">
                 <div className="trip-table-header">
-                  <span>Train No</span>
+                  <span>Train ID</span>
                   <span>Trip Start Time</span>
                   <span>Trip End Time</span>
                   <span>Trip Start Location</span>
@@ -211,18 +211,25 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
                   const status = getTripStatus(trip.tripFrom, trip.tripTo);
                   const isUpcoming = status === 'upcoming';
                   const isOngoing = status === 'ongoing';
+                  const isProtection = Number(trip.trainNo) === 0;
                   return (
                     <div className={`trip-table-row ${isUpcoming ? 'upcoming-trip' : isOngoing ? 'ongoing-trip' : 'past-trip'}`} key={`${trip.trainNo}-${index}`}>
-                      <span>{trip.trainNo}</span>
+                      <span>{isProtection ? 'PRO' : trip.trainNo}</span>
                       <span>
                         {trip.tripFrom}
                         {isUpcoming && <span className="trip-tag upcoming-tag">Upcoming</span>}
                         {isOngoing && <span className="trip-tag ongoing-tag">Ongoing</span>}
                       </span>
                       <span>{trip.tripTo}</span>
-                      <span>{trip.tripStartLocation}</span>
-                      <span>{trip.tripEndLocation}</span>
-                      <span>{trip.line}</span>
+                      {isProtection ? (
+                        <span style={{ gridColumn: 'span 3', color: 'rgb(226, 126, 44)', fontWeight: '700' }}>Protection</span>
+                      ) : (
+                        <>
+                          <span>{trip.tripStartLocation}</span>
+                          <span>{trip.tripEndLocation}</span>
+                          <span>{trip.line}</span>
+                        </>
+                      )}
                       <span>{trip.breakTime}</span>
                     </div>
                   );

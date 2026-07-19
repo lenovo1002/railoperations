@@ -7,6 +7,36 @@ import DutyDetailsPage from './components/DutyDetailsPage';
 const API_BASE_URL = '';
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = window.localStorage.getItem('theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      return savedTheme;
+    }
+    const hour = new Date().getHours();
+    if (hour >= 7 && hour < 18) {
+      return 'light';
+    }
+    return 'dark';
+  });
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const newTheme = prev === 'dark' ? 'light' : 'dark';
+      window.localStorage.setItem('theme', newTheme);
+      return newTheme;
+    });
+  };
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.body.classList.add('dark-theme');
+      document.body.classList.remove('light-theme');
+    } else {
+      document.body.classList.add('light-theme');
+      document.body.classList.remove('dark-theme');
+    }
+  }, [theme]);
+
   const [clockValue, setClockValue] = useState('');
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [loginId, setLoginId] = useState('');
@@ -248,6 +278,8 @@ function App() {
           onLogout={handleLogout}
           adminToken={adminToken}
           onNotify={notify}
+          theme={theme}
+          toggleTheme={toggleTheme}
         />
         <div className="toast-stack" aria-live="polite" aria-atomic="true">
           {notifications.map((item) => (
@@ -263,7 +295,12 @@ function App() {
   if (activePage === 'duty-details') {
     return (
       <>
-        <DutyDetailsPage onBack={() => setActivePage('home')} onNotify={notify} />
+        <DutyDetailsPage
+          onBack={() => setActivePage('home')}
+          onNotify={notify}
+          theme={theme}
+          toggleTheme={toggleTheme}
+        />
         <div className="toast-stack" aria-live="polite" aria-atomic="true">
           {notifications.map((item) => (
             <div key={item.id} className={`toast-item toast-${item.type}`}>
@@ -292,6 +329,13 @@ function App() {
         </div>
 
         <div className="top-bar-right">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           <button className="nav-button nav-button-icon" aria-label="Notifications">
             🔔
           </button>

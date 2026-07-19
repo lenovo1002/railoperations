@@ -6,8 +6,47 @@
   --text-muted: #64748b;
   --border-light: rgba(255, 255, 255, 0.15);
   font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background-color: #f1f5f9;
-  color: var(--text-dark);
+  
+  /* Theme variables (default light) */
+  --bg-color: #f1f5f9;
+  --text-primary: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(255, 255, 255, 0.45);
+  --overlay-bg: linear-gradient(to bottom, rgba(241, 245, 249, 0.45), rgba(226, 232, 240, 0.65));
+  --modal-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --ticker-bg: rgba(0, 24, 53, 0.95);
+  --ticker-text: #cbd5e1;
+  --footer-bg: rgba(15, 23, 42, 0.95);
+  --footer-text: #94a3b8;
+  --shadow-color: rgba(0, 36, 80, 0.06);
+  --dropzone-bg: #f8fafc;
+  --title-color: #002450;
+  
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-theme {
+  --bg-color: #000000;
+  --text-dark: #ffffff;
+  --text-primary: #ffffff;
+  --text-muted: #94a3b8;
+  --card-bg: rgba(0, 0, 0, 0.85);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --overlay-bg: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.98));
+  --modal-bg: #000000;
+  --input-bg: #000000;
+  --input-border: rgba(255, 255, 255, 0.25);
+  --ticker-bg: #000000;
+  --ticker-text: #cbd5e1;
+  --footer-bg: #000000;
+  --footer-text: #94a3b8;
+  --shadow-color: rgba(0, 0, 0, 0.8);
+  --dropzone-bg: #000000;
+  --title-color: rgb(226, 126, 44);
 }
 
 * {
@@ -383,15 +422,18 @@ body,
   position: relative;
   z-index: 1;
   width: min(100%, 420px);
-  background: #ffffff;
+  background: var(--modal-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
   border-radius: 20px;
   padding: 24px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
 }
 
 .admin-modal h2 {
   margin: 0 0 16px;
-  color: #002450;
+  color: var(--title-color);
 }
 
 .modal-field {
@@ -406,7 +448,9 @@ body,
 .modal-field input {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
   border-radius: 10px;
   font-size: 1rem;
 }
@@ -535,20 +579,20 @@ body,
 
 .duty-field span {
   font-size: 0.88rem;
-  color: #334155;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
 .duty-field input,
 .duty-field select {
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--input-border);
   border-radius: 10px;
   font-size: 0.92rem;
   font-family: inherit;
   transition: all 0.2s ease;
   padding: 10px 14px;
-  background: #ffffff;
-  color: var(--text-dark);
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .duty-field input:focus,
@@ -597,10 +641,10 @@ body,
 }
 
 .trip-entry {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--card-border);
   border-radius: 16px;
   padding: 16px;
-  background: #f8fafc;
+  background: var(--dropzone-bg);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -756,19 +800,21 @@ body,
   content: "";
   position: fixed;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(241, 245, 249, 0.45), rgba(226, 232, 240, 0.65));
+  background: var(--overlay-bg);
   z-index: -1;
+  transition: background 0.3s ease;
 }
 
 .dashboard-wrapper {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 28px;
   padding: 40px;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 20px 40px var(--shadow-color);
   margin-top: 10px;
+  transition: all 0.3s ease;
 }
 
 .whatsapp-btn {
@@ -803,15 +849,16 @@ body,
 /* External Links Modal */
 .links-modal {
   width: min(100%, 680px);
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--modal-bg);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--card-border);
   border-radius: 24px;
   padding: 28px;
-  box-shadow: 0 25px 60px rgba(0, 36, 80, 0.25);
+  box-shadow: 0 25px 60px var(--shadow-color);
   position: relative;
   z-index: 1;
+  transition: all 0.3s ease;
 }
 
 .links-modal-header {
@@ -820,7 +867,7 @@ body,
 
 .links-modal-header h2 {
   margin: 0 0 6px;
-  color: var(--primary-color);
+  color: var(--title-color);
   font-weight: 800;
   display: flex;
   align-items: center;
@@ -855,7 +902,7 @@ body,
 
 .links-column h3 {
   font-size: 1.05rem;
-  color: var(--primary-color);
+  color: var(--title-color);
   margin: 0 0 6px;
   border-bottom: 2px solid rgb(226, 126, 44);
   padding-bottom: 8px;
@@ -871,9 +918,9 @@ body,
   gap: 14px;
   padding: 14px 18px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(0, 36, 80, 0.08);
-  color: var(--text-dark);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
   text-decoration: none;
   font-weight: 600;
   font-size: 0.92rem;
@@ -934,16 +981,17 @@ body,
   z-index: 2001;
   width: min(95vw, 1200px);
   height: min(90vh, 850px);
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--modal-bg);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
+  border: 1px solid var(--card-border);
   border-radius: 24px;
   padding: 24px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 60px var(--shadow-color);
   display: flex;
   flex-direction: column;
   gap: 16px;
+  transition: all 0.3s ease;
 }
 
 .pdf-viewer-header {
@@ -956,7 +1004,7 @@ body,
 
 .pdf-viewer-header h2 {
   margin: 0;
-  color: var(--primary-color);
+  color: var(--title-color);
   font-weight: 800;
   font-size: 1.3rem;
   display: flex;
@@ -995,8 +1043,8 @@ body,
   position: relative;
   border-radius: 14px;
   overflow: hidden;
-  background: #f8fafc;
-  border: 1px solid rgba(0, 36, 80, 0.08);
+  background: var(--dropzone-bg);
+  border: 1px solid var(--card-border);
 }
 
 .pdf-iframe-loader {
@@ -1006,7 +1054,7 @@ body,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
+  background: var(--dropzone-bg);
   color: var(--text-muted);
   font-weight: 600;
   gap: 12px;
@@ -1042,11 +1090,11 @@ body,
 }
 
 .file-dropzone {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--input-border);
   border-radius: 12px;
   padding: 24px;
   text-align: center;
-  background: #f8fafc;
+  background: var(--dropzone-bg);
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -1085,4 +1133,39 @@ body,
 .file-input-hidden {
   display: none;
 }
+
+/* Theme Toggle Button Styling */
+.theme-toggle-btn {
+  font-size: 1.15rem;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease, border-color 0.2s ease;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.theme-toggle-btn:hover {
+  transform: rotate(30deg) scale(1.1);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Modal text overrides to support dark mode readability */
+.dev-modal-desc,
+.disclaimer-content,
+.disclaimer-content p {
+  color: var(--text-primary) !important;
+}
+
 

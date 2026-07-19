@@ -12,7 +12,7 @@ const API_BASE_URL = '';
 
 
 
-const DutyDetailsPage = ({ onBack, onNotify }) => {
+const DutyDetailsPage = ({ onBack, onNotify, theme, toggleTheme }) => {
   const [dutyNumber, setDutyNumber] = useState('');
   const [dutyData, setDutyData] = useState(null);
   const [clockValue, setClockValue] = useState('');
@@ -155,6 +155,13 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
         </div>
 
         <div className="top-bar-right">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           <button className="nav-button admin-button" aria-label="Back to Home" onClick={onBack}>
             <span className="admin-icon">🏠</span>
             <span className="admin-label">Home</span>
@@ -222,7 +229,7 @@ const DutyDetailsPage = ({ onBack, onNotify }) => {
                       </span>
                       <span>{trip.tripTo}</span>
                       {isProtection ? (
-                        <span style={{ gridColumn: 'span 3', color: 'rgb(226, 126, 44)', fontWeight: '700' }}>Protection</span>
+                        <span className="protection-cell">PROTECTION</span>
                       ) : (
                         <>
                           <span>{trip.tripStartLocation}</span>

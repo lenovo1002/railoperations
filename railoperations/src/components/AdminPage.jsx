@@ -34,7 +34,7 @@ const adminCards = [
   { title: 'Announcements', icon: '📢', colorClass: 'card-pink' },
 ];
 
-const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
+const AdminPage = ({ onHome, onLogout, onNotify, adminToken, theme, toggleTheme }) => {
   const [clockValue, setClockValue] = useState('');
   const [showDutyModal, setShowDutyModal] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
@@ -230,6 +230,14 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken }) => {
         </div>
 
         <div className="top-bar-right">
+          <button
+            className="theme-toggle-btn"
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           <button className="nav-button admin-button" type="button" onClick={onHome}>
             <span className="admin-icon">🏠</span>
             <span className="admin-label">Home</span>

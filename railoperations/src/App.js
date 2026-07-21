@@ -51,9 +51,65 @@ function App() {
   const [notifications, setNotifications] = useState([]);
   const [developmentModal, setDevelopmentModal] = useState({ isOpen: false, featureName: '' });
   const [showLinksModal, setShowLinksModal] = useState(false);
+  const [showRaiseIssueModal, setShowRaiseIssueModal] = useState(false);
+  const [raiseIssueDutyNo, setRaiseIssueDutyNo] = useState('');
+  const [raiseIssueDescription, setRaiseIssueDescription] = useState('');
+  const [isSubmittingIssue, setIsSubmittingIssue] = useState(false);
+  const [raiseIssueError, setRaiseIssueError] = useState('');
   const [activePdf, setActivePdf] = useState(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [disclaimerCountdown, setDisclaimerCountdown] = useState(10);
+
+  const handleRaiseIssueSubmit = async (event) => {
+    event.preventDefault();
+    const trimmedDutyNo = raiseIssueDutyNo.trim();
+    if (!trimmedDutyNo) {
+      setRaiseIssueError('Duty number is required.');
+      return;
+    }
+
+    const dutyNoNum = Number(trimmedDutyNo);
+    if (isNaN(dutyNoNum)) {
+      setRaiseIssueError('Duty number must be a valid number.');
+      return;
+    }
+
+    setIsSubmittingIssue(true);
+    setRaiseIssueError('');
+
+    try {
+      const payload = {
+        duty_no: dutyNoNum,
+        description: raiseIssueDescription.trim(),
+      };
+
+      const response = await fetch(`${API_BASE_URL}/tripchart/raiseissue`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.status === 404) {
+        throw new Error('Duty number not found or does not match backend records.');
+      }
+
+      if (!response.ok) {
+        const errText = await response.text().catch(() => '');
+        throw new Error(errText || 'Failed to submit issue. Please try again.');
+      }
+
+      notify('Issue raised successfully! Admin will review it.', 'success');
+      setShowRaiseIssueModal(false);
+      setRaiseIssueDutyNo('');
+      setRaiseIssueDescription('');
+    } catch (error) {
+      const message = error.message || 'Unable to submit issue.';
+      setRaiseIssueError(message);
+      notify(message, 'error');
+    } finally {
+      setIsSubmittingIssue(false);
+    }
+  };
 
   useEffect(() => {
     if (adminToken && tokenExpiresAt > Date.now()) {
@@ -371,7 +427,12 @@ function App() {
                 setActivePage('duty-details');
               } else if (title === 'External Links') {
                 setShowLinksModal(true);
-              } else if (title === 'Compare Duties' || title === 'Raise Issue') {
+              } else if (title === 'Raise Issue') {
+                setRaiseIssueDutyNo('');
+                setRaiseIssueDescription('');
+                setRaiseIssueError('');
+                setShowRaiseIssueModal(true);
+              } else if (title === 'Compare Duties') {
                 setDevelopmentModal({ isOpen: true, featureName: title });
               }
             }} />
@@ -449,6 +510,64 @@ function App() {
                 {isAuthenticating ? 'Authenticating...' : 'Login'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showRaiseIssueModal && (
+        <div className="modal-overlay" role="presentation" onClick={() => setShowRaiseIssueModal(false)}>
+          <div className="modal-backdrop" aria-hidden="true" />
+          <div className="admin-modal raise-issue-modal" role="dialog" aria-modal="true" aria-labelledby="raise-issue-title" onClick={(event) => event.stopPropagation()}>
+            <div className="modal-header">
+              <h2 id="raise-issue-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgb(226, 126, 44)' }}>
+                <span>⚠️</span> Raise An Issue
+              </h2>
+              <p>Found a discrepancy in your duty details? Submit an issue for admin review.</p>
+            </div>
+
+            <form className="duty-form" onSubmit={handleRaiseIssueSubmit}>
+              <label className="modal-field duty-field">
+                <span>Duty Number <span style={{ color: '#ef4444' }}>*</span></span>
+                <input
+                  type="number"
+                  placeholder="e.g. 125"
+                  value={raiseIssueDutyNo}
+                  onChange={(e) => setRaiseIssueDutyNo(e.target.value)}
+                  required
+                />
+              </label>
+
+              <label className="modal-field duty-field">
+                <span>Description <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>(Optional)</span></span>
+                <textarea
+                  className="modal-textarea"
+                  placeholder="Describe the issue or discrepancy found..."
+                  rows={4}
+                  value={raiseIssueDescription}
+                  onChange={(e) => setRaiseIssueDescription(e.target.value)}
+                />
+              </label>
+
+              {raiseIssueError && <p role="alert" className="form-feedback error">{raiseIssueError}</p>}
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="modal-button secondary"
+                  onClick={() => setShowRaiseIssueModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="modal-button primary"
+                  disabled={isSubmittingIssue}
+                  style={{ backgroundColor: 'rgb(226, 126, 44)', borderColor: 'rgb(226, 126, 44)' }}
+                >
+                  {isSubmittingIssue ? 'Submitting...' : 'Submit Issue'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

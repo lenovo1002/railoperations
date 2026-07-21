@@ -47,6 +47,43 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken, theme, toggleTheme 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
 
+  // States for View Issues
+  const [showViewIssuesModal, setShowViewIssuesModal] = useState(false);
+  const [issuesList, setIssuesList] = useState([]);
+  const [isLoadingIssues, setIsLoadingIssues] = useState(false);
+  const [issuesError, setIssuesError] = useState('');
+
+  const fetchIssues = async () => {
+    setIsLoadingIssues(true);
+    setIssuesError('');
+    try {
+      const headers = {};
+      if (adminToken) {
+        headers['Authorization'] = `Bearer ${adminToken}`;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/tripchart/viewallissues`, {
+        method: 'GET',
+        headers,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => '');
+        throw new Error(errorText || 'Failed to fetch issues.');
+      }
+
+      const data = await response.json();
+      const list = Array.isArray(data) ? data : (data?.issues || data?.data || []);
+      setIssuesList(list);
+    } catch (error) {
+      const message = error.message || 'Unable to load reported issues.';
+      setIssuesError(message);
+      onNotify?.(message, 'error');
+    } finally {
+      setIsLoadingIssues(false);
+    }
+  };
+
   useEffect(() => {
     const formatClock = () => {
       const now = new Date();
@@ -72,6 +109,9 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken, theme, toggleTheme 
       setUploadError('');
       setSelectedFile(null);
       setShowUploadModal(true);
+    } else if (title === 'View Issues') {
+      setShowViewIssuesModal(true);
+      fetchIssues();
     }
   };
 
@@ -477,6 +517,96 @@ const AdminPage = ({ onHome, onLogout, onNotify, adminToken, theme, toggleTheme 
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showViewIssuesModal && (
+        <div className="modal-overlay" role="presentation" onClick={() => setShowViewIssuesModal(false)}>
+          <div className="modal-backdrop" aria-hidden="true" />
+          <div className="admin-modal issues-modal" role="dialog" aria-modal="true" aria-labelledby="view-issues-title" onClick={(event) => event.stopPropagation()}>
+            <div className="modal-header issues-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 id="view-issues-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgb(226, 126, 44)' }}>
+                  <span>⚠️</span> Reported Issues
+                </h2>
+                <p>Review duty discrepancy issues submitted by users.</p>
+              </div>
+              <button
+                type="button"
+                className="refresh-issues-btn"
+                onClick={fetchIssues}
+                disabled={isLoadingIssues}
+                title="Refresh issues"
+              >
+                🔄 {isLoadingIssues ? 'Loading...' : 'Refresh'}
+              </button>
+            </div>
+
+            <div className="issues-modal-body">
+              {isLoadingIssues ? (
+                <div className="issues-loading">
+                  <div className="pdf-spinner"></div>
+                  <span>Fetching reported issues...</span>
+                </div>
+              ) : issuesError ? (
+                <div className="issues-error-box">
+                  <p className="form-feedback error">{issuesError}</p>
+                  <button type="button" className="modal-button secondary" onClick={fetchIssues}>
+                    Try Again
+                  </button>
+                </div>
+              ) : issuesList.length === 0 ? (
+                <div className="issues-empty-state">
+                  <span className="empty-icon">🎉</span>
+                  <h3>No Issues Found</h3>
+                  <p>There are currently no reported issues or discrepancies.</p>
+                </div>
+              ) : (
+                <div className="issues-table-container">
+                  <table className="issues-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Duty No</th>
+                        <th>Description</th>
+                        <th>Reported Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {issuesList.map((issue, idx) => {
+                        const dutyNo = issue.duty_no ?? issue.dutyNo ?? issue.duty_number ?? 'N/A';
+                        const desc = issue.description || issue.desc || issue.message || 'No description provided';
+                        const rawDate = issue.created_at || issue.createdAt || issue.timestamp || issue.date;
+                        const formattedDate = rawDate ? new Date(rawDate).toLocaleString() : 'N/A';
+
+                        return (
+                          <tr key={issue.id || issue._id || idx}>
+                            <td className="issue-index">{idx + 1}</td>
+                            <td className="issue-duty-no">
+                              <span className="duty-badge">Duty #{dutyNo}</span>
+                            </td>
+                            <td className="issue-desc">{desc}</td>
+                            <td className="issue-date">{formattedDate}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            <div className="modal-actions" style={{ marginTop: '20px' }}>
+              <button
+                type="button"
+                className="modal-button secondary"
+                onClick={() => setShowViewIssuesModal(false)}
+                style={{ width: '100%', height: '42px', borderRadius: '10px' }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

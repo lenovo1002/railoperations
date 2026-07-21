@@ -30,6 +30,17 @@ public class TripChartService {
 		
 	}
 	
+	public ResponseEntity<?> saveAllTrips(Iterable<TripDetails> allTrips) {
+
+	    for (TripDetails trip : allTrips) {
+	        System.out.println("Duty No = " + trip.getDutyNo());
+	        System.out.println("TripTime = " + trip.getTripTime());
+	    }
+
+	    tripRepo.saveAll(allTrips);
+	    return ResponseEntity.ok().build();
+	}
+	
 	public ResponseEntity<TripDetails> getTripDetails(Integer dutyNo){
 		if (!tripRepo.existsById(dutyNo)) return ResponseEntity.notFound().header("Error ! ", "Duty number not found ! ").build() ;
 		

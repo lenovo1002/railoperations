@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import mahametro.tripchart.entity.Issues;
 import mahametro.tripchart.entity.TripDetails;
+import mahametro.tripchart.service.IssueService;
 import mahametro.tripchart.service.TripChartService;
 @RestController
 @RequestMapping("tripchart")
@@ -22,12 +24,21 @@ public class TripDetailsController {
 	
 	@Autowired
 	private TripChartService tripService ;
+	@Autowired
+	private IssueService issueService ;
 	
 	@GetMapping("/{dutyNo}")
 	public ResponseEntity<?> getByDutyNo(@PathVariable Integer dutyNo) {
 		return tripService.getTripDetails(dutyNo);
 		
 		
+	}
+	
+	@PostMapping("/addalltrip") 
+	public ResponseEntity addAllTrips(@RequestBody Iterable<TripDetails> allTrips) {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return tripService.saveAllTrips(allTrips);
 	}
 	
 	@PostMapping("/addtrip")
@@ -43,6 +54,20 @@ public class TripDetailsController {
 	public String test() {
 		return "Yahoo, Server is up !";
 	}
+	
+	@PostMapping("/raiseissue") 
+	public ResponseEntity<?> raisedIssue (@RequestBody Issues issue) {
+		return issueService.addIssue(issue);
+	}
+	
+	
+	@GetMapping ("/viewallissues")
+	public Iterable<Issues> getAllissues () {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return issueService.getAllIssues() ;
+	}
+		
 	
 	
 	

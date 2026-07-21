@@ -93,7 +93,8 @@ public class SecurityConfig {
 	            .authorizeHttpRequests(auth -> auth
 
 	                    // Only protected endpoint
-	                    .requestMatchers("/tripchart/addtrip").authenticated()
+	                    .requestMatchers("/tripchart/addtrip" , "/tripchart/addalltrip" , "/tripchart/viewallissues")
+	                    .authenticated()
 
 	                    // Everything else is public
 	                    .anyRequest().permitAll()
